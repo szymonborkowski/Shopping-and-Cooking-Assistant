@@ -1,5 +1,27 @@
 <resources>
     <string name="app_name">Shopping and Cooking Assistant</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="update_details">UPDATE DETAILS</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+
+    <string-array name="user_details_titles">
+        <item>First Name</item>
+        <item>Surname</item>
+        <item>Email Address</item>
+        <item>Password</item>
+        <item>Equipment</item>
+        <item>Allergies</item>
+        <item>Ingredients</item>
+    </string-array>
+
+    <string-array name="user_details_entries">
+        <item>John</item>
+        <item>Doe</item>
+        <item>john.doe@email.com</item>
+        <item>Pass123!</item>
+        <item>Pot, Pan, Rice cooker</item>
+        <item>Peanut</item>
+        <item>Eggs, Rice, Milk</item>
+    </string-array>
+
 </resources>
