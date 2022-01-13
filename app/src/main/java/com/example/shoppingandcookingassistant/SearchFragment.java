@@ -2,57 +2,41 @@ package com.example.shoppingandcookingassistant;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SearchView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SearchFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SearchFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    ListView listView;
+    String[] recipes = {"Spaghetti", "Vegetable soup", "Curry", "Noodles",
+                        "Lasagna", "Burger", "Steak pie", "Fish and chips",
+                        "Steak", "Ravioli", "Pasta", "Chicken", "Curry",
+                        "Trout", "Salmon", "Potato and egg pie", "Poached Eggs"};
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    ArrayAdapter<String> arrayAdapter;
 
     public SearchFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SearchFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SearchFragment newInstance(String param1, String param2) {
-        SearchFragment fragment = new SearchFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static SearchFragment newInstance() {
+        return new SearchFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -60,5 +44,37 @@ public class SearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+        listView = view.findViewById(R.id.listView);  // Displays list of recipes
+        arrayAdapter = new ArrayAdapter<>(getActivity(),
+                                          R.layout.support_simple_spinner_dropdown_item,
+                                          recipes);
+        listView.setAdapter(arrayAdapter);
+
+        SearchView searchView = view.findViewById(R.id.searchRecipeView);
+        searchView.setQueryHint("Type here to search");  // Hint for user
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            // Called when user types in some text and presses 'Enter'
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // results get displayed
+                arrayAdapter.getFilter().filter(query);
+                return false;
+            }
+
+            // Called each time a user enters a character
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // If text bar is empty reset to whole list
+                if(newText.equals(""))
+                    arrayAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
     }
 }

@@ -63,6 +63,6 @@ public class UserFragment extends Fragment {
     }
 
     public void buttonPress(View view) {
-
+        // SQL command here
     }
 }
