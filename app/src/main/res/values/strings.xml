@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Shopping and Cooking Assistant</string>
+
+    <!-- User profile -->
     <string name="update_details">UPDATE DETAILS</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
@@ -23,5 +25,18 @@
         <item>Peanut</item>
         <item>Eggs, Rice, Milk</item>
     </string-array>
+
+    <!-- Calendar -->
+    <string name="leftArrow"><![CDATA[<-]]></string>
+    <string name="rightArrow"><![CDATA[->]]></string>
+    <string name="month_here">month</string>
+    <string name="mon_cal">MON</string>
+    <string name="tue_cal">TUE</string>
+    <string name="wed_cal">WED</string>
+    <string name="thu_cal">THU</string>
+    <string name="fri_cal">FRI</string>
+    <string name="sat_cal">SAT</string>
+    <string name="sun_cal">SUN</string>
+    <string name="day_1">1</string>
 
 </resources>

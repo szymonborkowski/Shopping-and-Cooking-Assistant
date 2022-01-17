@@ -6,7 +6,7 @@ It has 5 main features:
 - Recipe Search screen
     * An interface for the user to search through the available recipes
 - Calendar screen
-    * Not yet implemented
+    * An interface for the user to select certain dates - later allow user to choose recipes for chosen dates
 - Virtual Basket screen
     * Not yet implemented
 - User Profile screen
