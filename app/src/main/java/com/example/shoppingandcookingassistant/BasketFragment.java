@@ -1,64 +1,101 @@
 package com.example.shoppingandcookingassistant;
 
+import android.Manifest;
+import android.app.Activity;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link BasketFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.budiyev.android.codescanner.AutoFocusMode;
+import com.budiyev.android.codescanner.CodeScanner;
+import com.budiyev.android.codescanner.CodeScannerView;
+import com.budiyev.android.codescanner.DecodeCallback;
+import com.budiyev.android.codescanner.ScanMode;
+import com.google.zxing.Result;
+
+// Uses Code scanner library created by Yuriy Budiyev
+// link to library: https://github.com/yuriy-budiyev/code-scanner
+
 public class BasketFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private CodeScanner codeScanner;
+    private TextView barcodeDescription;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final int CAMERA_REQUEST = 101;
+
+    Activity activity;
 
     public BasketFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment BasketFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static BasketFragment newInstance(String param1, String param2) {
-        BasketFragment fragment = new BasketFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static BasketFragment newInstance() {
+        return new BasketFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_basket, container, false);
+
+        activity = getActivity();
+        View root = inflater.inflate(R.layout.fragment_basket, container, false);
+
+        barcodeDescription = root.findViewById(R.id.barcode_textView);  // set a value to the TV
+
+        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
+
+        CodeScannerView scannerView = root.findViewById(R.id.barcode_scanner_view);
+        codeScanner = new CodeScanner(activity, scannerView);
+
+        // Setting the options of the barcode scanner object:
+        codeScanner.setCamera(CodeScanner.CAMERA_BACK);
+        codeScanner.setFormats(CodeScanner.ALL_FORMATS);
+        codeScanner.setAutoFocusMode(AutoFocusMode.SAFE);
+        codeScanner.setScanMode(ScanMode.CONTINUOUS);
+        codeScanner.setAutoFocusEnabled(true);
+        codeScanner.setFlashEnabled(false);
+
+        codeScanner.setDecodeCallback(new DecodeCallback() {
+            // Method runs when a barcode is detected:
+            @Override
+            public void onDecoded(@NonNull Result result) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        barcodeDescription.setText(result.toString());  // displays result
+                    }
+                });
+            }
+        });
+
+        scannerView.setOnClickListener(view -> codeScanner.startPreview());
+
+        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        codeScanner.startPreview();
+    }
+
+    @Override
+    public void onPause() {
+        codeScanner.releaseResources();
+        super.onPause();
     }
 }

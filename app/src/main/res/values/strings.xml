@@ -38,5 +38,6 @@
     <string name="sat_cal">SAT</string>
     <string name="sun_cal">SUN</string>
     <string name="day_1">1</string>
+    <string name="barcode_scanner_message">Please scan a barcode...</string>
 
 </resources>
