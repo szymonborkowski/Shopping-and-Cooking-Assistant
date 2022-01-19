@@ -26,6 +26,10 @@
         <item>Eggs, Rice, Milk</item>
     </string-array>
 
+    <!-- Search -->
+    <string name="recipe_name_placeholder">Recipe name here…</string>
+    <string name="recipe_instructions_placeholder">Instructions here…</string>
+
     <!-- Calendar -->
     <string name="leftArrow"><![CDATA[<-]]></string>
     <string name="rightArrow"><![CDATA[->]]></string>
@@ -38,6 +42,8 @@
     <string name="sat_cal">SAT</string>
     <string name="sun_cal">SUN</string>
     <string name="day_1">1</string>
-    <string name="barcode_scanner_message">Please scan a barcode...</string>
+
+    <!-- Virtual Basket -->
+    <string name="barcode_scanner_message">Please scan a barcode…</string>
 
 </resources>

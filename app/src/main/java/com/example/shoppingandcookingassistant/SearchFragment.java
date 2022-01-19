@@ -1,5 +1,6 @@
 package com.example.shoppingandcookingassistant;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,17 +13,39 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class SearchFragment extends Fragment {
 
     ListView listView;
+
+    // Sample recipes:
     String[] recipes = {"Spaghetti", "Vegetable soup", "Curry", "Noodles",
                         "Lasagna", "Burger", "Steak pie", "Fish and chips",
                         "Steak", "Ravioli", "Pasta", "Chicken", "Curry",
                         "Trout", "Salmon", "Potato and egg pie", "Poached Eggs"};
+
+    // Sample instructions:
+    String[] instructions = {"Spaghetti instructions", "Vegetable soup instructions",
+            "Curry instructions", "Noodles instructions", "Lasagna instructions",
+            "Burger instructions", "Steak pie instructions", "Fish and chips instructions",
+            "Steak instructions", "Ravioli instructions", "Pasta instructions",
+            "Chicken instructions", "Curry instructions",
+            "Trout instructions", "Salmon instructions", "Potato and egg pie instructions",
+            "Poached Eggs instructions"};
+
+    /*
+     * It's a good practice to define keys for intent extras with your app's package name as a prefix.
+     * This ensures that the keys are unique, in case your app interacts with other apps.
+     * The key is a public constant because the next activity uses the key to retrieve the text value.
+     */
+    public static final String RECIPE_NAME = "com.example.shoppingandcookingassistant.RECIPE_NAME";
+    public static final String RECIPE_INSTRUCTIONS = "com.example.shoppingandcookingassistant.RECIPE_INSTRUCTIONS";
 
     ArrayAdapter<String> arrayAdapter;
 
@@ -55,6 +78,15 @@ public class SearchFragment extends Fragment {
                                           recipes);
         listView.setAdapter(arrayAdapter);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // open new activity
+                openRecipe(view, position);
+
+            }
+        });
+
         SearchView searchView = view.findViewById(R.id.searchRecipeView);
         searchView.setQueryHint("Type here to search");  // Hint for user
 
@@ -76,5 +108,16 @@ public class SearchFragment extends Fragment {
                 return false;
             }
         });
+    }
+
+    public void openRecipe(View view, int pos) {
+        // creates an intent based on the passed in class:
+        Intent intent = new Intent(getActivity(), DisplayRecipeInstructions.class);
+
+        // pass in values from the chosen recipe:
+        intent.putExtra(RECIPE_NAME, recipes[pos]);
+        intent.putExtra(RECIPE_INSTRUCTIONS, instructions[pos]);
+
+        startActivity(intent);
     }
 }
