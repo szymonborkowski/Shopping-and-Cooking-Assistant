@@ -11,17 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link UserFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class UserFragment extends Fragment {
 
     RecyclerView recyclerView;
-    RVAdapter rvAdapter;
+    UserDetailsRVAdapter rvAdapter;
     String[] titles, descriptions;
+    Button updateDetails;
 
     public UserFragment() {
         // Required empty public constructor
@@ -52,15 +50,21 @@ public class UserFragment extends Fragment {
         // titles = view.getResources().getStringArray(R.array.user_details);
         descriptions = getResources().getStringArray(R.array.user_details_entries);
 
-        rvAdapter = new RVAdapter(getActivity(), titles, descriptions);
+        rvAdapter = new UserDetailsRVAdapter(getActivity(), titles, descriptions);
 
         recyclerView.setAdapter(rvAdapter);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-    }
+        updateDetails = view.findViewById(R.id.updateButton);
 
-    public void buttonPress(View view) {
-        // SQL command here
+        updateDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Insert SQL update command here
+                Toast.makeText(getActivity(), "Details updated", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 }

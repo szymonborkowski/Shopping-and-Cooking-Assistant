@@ -12,12 +12,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RVViewHolder> {
+public class UserDetailsRVAdapter extends RecyclerView.Adapter<UserDetailsRVAdapter.RVViewHolder> {
 
     Context c;
     String[] s1, s2;
 
-    public RVAdapter(Context c, String[] s1, String[] s2) {
+    public UserDetailsRVAdapter(Context c, String[] s1, String[] s2) {
         this.c = c;
         this.s1 = s1;
         this.s2 = s2;
@@ -28,7 +28,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.RVViewHolder> {
     public RVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(c);
         View view = inflater.inflate(R.layout.item_row, parent, false);
-
         return new RVViewHolder(view);
     }
 

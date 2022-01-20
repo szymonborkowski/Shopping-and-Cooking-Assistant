@@ -32,8 +32,4 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
     }
-
-    public void buttonPress(View view) {
-        // SQL command here
-    }
 }

@@ -45,5 +45,8 @@
 
     <!-- Virtual Basket -->
     <string name="barcode_scanner_message">Please scan a barcode…</string>
+    <string name="home_screen_message">Welcome User!</string>
+    <string name="recipe_name">recipe name</string>
+    <string name="home_recipe_description">Recipe description here...</string>
 
 </resources>
