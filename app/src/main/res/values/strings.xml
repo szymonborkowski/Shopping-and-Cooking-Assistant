@@ -47,7 +47,13 @@
     <string name="barcode_scanner_message">Please scan a barcode…</string>
     <string name="home_screen_message">Welcome User!</string>
     <string name="recipe_name">recipe name</string>
-    <string name="home_recipe_description">Recipe description here...</string>
+    <string name="home_recipe_description">Recipe description here…</string>
     <string name="ingredient_name_placeholder">ingredient name</string>
+
+    <!-- Login Screen -->
+    <string name="welcome_message">Welcome!</string>
+    <string name="username">Username ("user")</string>
+    <string name="password">Password ("pass")</string>
+    <string name="login">Login</string>
 
 </resources>
