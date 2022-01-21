@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,9 @@ import com.budiyev.android.codescanner.DecodeCallback;
 import com.budiyev.android.codescanner.ScanMode;
 import com.google.zxing.Result;
 
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
 // Uses Code scanner library created by Yuriy Budiyev
 // link to library: https://github.com/yuriy-budiyev/code-scanner
 
@@ -29,6 +34,13 @@ public class BasketFragment extends Fragment {
 
     private CodeScanner codeScanner;
     private TextView barcodeDescription;
+    private RecyclerView listOfScannedItemsRV;
+    private BasketListRVAdapter rvAdapter;
+    private ArrayList<String> basketContents;
+
+    Result previousResult;
+    boolean timerStarted = false;
+    long timeSeconds;
 
     private static final int CAMERA_REQUEST = 101;
 
@@ -54,6 +66,17 @@ public class BasketFragment extends Fragment {
         activity = getActivity();
         View root = inflater.inflate(R.layout.fragment_basket, container, false);
 
+        // List of scanned items:
+        basketContents = new ArrayList<>();
+
+        listOfScannedItemsRV = root.findViewById(R.id.listOfScannedItemsRV);
+
+        rvAdapter = new BasketListRVAdapter(getActivity(), basketContents);
+
+        listOfScannedItemsRV.setAdapter(rvAdapter);
+        listOfScannedItemsRV.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        // Barcode scanner:
         barcodeDescription = root.findViewById(R.id.barcode_textView);  // set a value to the TV
 
         ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
@@ -76,7 +99,38 @@ public class BasketFragment extends Fragment {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        barcodeDescription.setText(result.toString());  // displays result
+
+                        previousResult = result;
+
+                        // If the same barcode is scanned, check if the timer has been started
+                        // if not, start the timer
+                        if(result.equals(previousResult) && !timerStarted) {
+                            long timeStartMillis = System.currentTimeMillis();
+                            timeSeconds = TimeUnit.MILLISECONDS.toSeconds(timeStartMillis);
+                            timerStarted = true;
+
+                            // add the item to the list
+                            barcodeDescription.setText(result.toString());  // displays result
+                            rvAdapter.addItemToBasket(result.toString());
+
+                            // display a message to the user
+                            Toast.makeText(getActivity(), result.toString() + " added", Toast.LENGTH_SHORT).show();
+                        }
+
+                        // if the timer has been running for 5 seconds,
+                        // stop the timer to allow the item to be added to the list again
+                        if((TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - timeSeconds >= 5)) {
+                            timerStarted = false;
+                        }
+
+                        // if the scanned barcode is different from the previous one
+                        // add it to the list immediately
+                        if(!result.equals(previousResult)) {
+                            barcodeDescription.setText(result.toString());  // displays result
+                            rvAdapter.addItemToBasket(result.toString());
+
+                            Toast.makeText(getActivity(), result.toString() + " added", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }
