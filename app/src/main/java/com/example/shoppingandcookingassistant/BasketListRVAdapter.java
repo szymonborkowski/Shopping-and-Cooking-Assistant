@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,6 +33,15 @@ public class BasketListRVAdapter extends RecyclerView.Adapter<BasketListRVAdapte
     @Override
     public void onBindViewHolder(@NonNull BasketRVViewHolder holder, int position) {
         holder.ingredients.setText(ingredients.get(position));
+
+        holder.removeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ingredients.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, getItemCount());
+            }
+        });
     }
 
     @Override
@@ -42,11 +52,13 @@ public class BasketListRVAdapter extends RecyclerView.Adapter<BasketListRVAdapte
     public class BasketRVViewHolder extends RecyclerView.ViewHolder {
 
         TextView ingredients;
+        ImageButton removeBtn;
 
         public BasketRVViewHolder(@NonNull View itemView) {
             super(itemView);
 
             ingredients = itemView.findViewById(R.id.ingredientTV);
+            removeBtn = itemView.findViewById(R.id.removeBtn);
         }
     }
 

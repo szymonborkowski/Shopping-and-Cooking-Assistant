@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ShoppingAndCookingAssistant">
-        <activity android:name=".LogInScreenActivity"></activity>
+        <activity android:name=".AddRecipeEvent" />
+        <activity android:name=".LogInScreenActivity" />
         <activity android:name=".DisplayRecipeInstructions" />
         <activity android:name=".MainActivity">
             <intent-filter>

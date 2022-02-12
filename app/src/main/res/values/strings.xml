@@ -55,5 +55,6 @@
     <string name="username">Username ("user")</string>
     <string name="password">Password ("pass")</string>
     <string name="login">Login</string>
+    <string name="remove_icon">remove icon</string>
 
 </resources>

@@ -25,6 +25,7 @@ import com.budiyev.android.codescanner.ScanMode;
 import com.google.zxing.Result;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 // Uses Code scanner library created by Yuriy Budiyev
@@ -38,8 +39,9 @@ public class BasketFragment extends Fragment {
     private BasketListRVAdapter rvAdapter;
     private ArrayList<String> basketContents;
 
-    Result previousResult;
+    Result previousResult = null;
     boolean timerStarted = false;
+    boolean timerComplete = false;
     long timeSeconds;
 
     private static final int CAMERA_REQUEST = 101;
@@ -99,38 +101,54 @@ public class BasketFragment extends Fragment {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
-                        previousResult = result;
-
                         // If the same barcode is scanned, check if the timer has been started
                         // if not, start the timer
-                        if(result.equals(previousResult) && !timerStarted) {
-                            long timeStartMillis = System.currentTimeMillis();
-                            timeSeconds = TimeUnit.MILLISECONDS.toSeconds(timeStartMillis);
-                            timerStarted = true;
-
+                        if(Objects.isNull(previousResult)) {
                             // add the item to the list
                             barcodeDescription.setText(result.toString());  // displays result
                             rvAdapter.addItemToBasket(result.toString());
 
                             // display a message to the user
                             Toast.makeText(getActivity(), result.toString() + " added", Toast.LENGTH_SHORT).show();
+                            previousResult = result;
                         }
 
-                        // if the timer has been running for 5 seconds,
-                        // stop the timer to allow the item to be added to the list again
-                        if((TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - timeSeconds >= 5)) {
-                            timerStarted = false;
+                        else if(result.toString().equals(previousResult.toString()) && !timerStarted) {
+                            timerStarted = true;
+                            long timeStartMillis = System.currentTimeMillis();
+                            timeSeconds = TimeUnit.MILLISECONDS.toSeconds(timeStartMillis);
+
+                            if(timerComplete) {
+                                // add the item to the list
+                                barcodeDescription.setText(result.toString());  // displays result
+                                rvAdapter.addItemToBasket(result.toString());
+
+                                // display a message to the user
+                                Toast.makeText(getActivity(), result.toString() + " added", Toast.LENGTH_SHORT).show();
+
+                                timerComplete = false;
+                            }
                         }
 
                         // if the scanned barcode is different from the previous one
                         // add it to the list immediately
-                        if(!result.equals(previousResult)) {
-                            barcodeDescription.setText(result.toString());  // displays result
-                            rvAdapter.addItemToBasket(result.toString());
+                        else if(!result.toString().equals(previousResult.toString())) {
+                                barcodeDescription.setText(result.toString());  // displays result
+                                rvAdapter.addItemToBasket(result.toString());
 
-                            Toast.makeText(getActivity(), result.toString() + " added", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), result.toString() + " added", Toast.LENGTH_SHORT).show();
+
+                                previousResult = result;
                         }
+
+                        // if the timer has been running for 5 seconds,
+                        // stop the timer to allow the item to be added to the list again
+                        if((TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - timeSeconds >= 5) && timerStarted) {
+                            timerComplete = true;
+                            timerStarted = false;
+                        }
+
+
                     }
                 });
             }
