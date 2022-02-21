@@ -15,17 +15,20 @@ import androidx.recyclerview.widget.RecyclerView;
 public class HomeRecipeRVAdapter extends RecyclerView.Adapter<HomeRecipeRVAdapter.HomeRVViewHolder> {
 
     Context context;
-    String[] titles, descriptions;
+    String[] titles, descriptions, ingredients, instructions;
 
     public static final String RECIPE_NAME = "com.example.shoppingandcookingassistant.RECIPE_NAME";
     public static final String RECIPE_INSTRUCTIONS = "com.example.shoppingandcookingassistant.RECIPE_INSTRUCTIONS";
+    public static final String RECIPE_INGREDIENTS = "com.example.shoppingandcookingassistant.RECIPE_INGREDIENTS";
 
     RecyclerView recyclerView;
 
-    public HomeRecipeRVAdapter(Context context, String[] titles, String[] descriptions, RecyclerView recyclerView) {
+    public HomeRecipeRVAdapter(Context context, String[] titles, String[] descriptions, String[] ingredients, String[] instructions, RecyclerView recyclerView) {
         this.context = context;
         this.titles = titles;
         this.descriptions = descriptions;
+        this.ingredients = ingredients;
+        this.instructions = instructions;
         this.recyclerView = recyclerView;
     }
 
@@ -40,7 +43,8 @@ public class HomeRecipeRVAdapter extends RecyclerView.Adapter<HomeRecipeRVAdapte
                 int itemPosition = recyclerView.getChildAdapterPosition(v);  // checks which item you clicked
                 Intent intent = new Intent(context, DisplayRecipeInstructions.class);  // create a new intent based on opening a recipe
                 intent.putExtra(RECIPE_NAME, titles[itemPosition]);
-                intent.putExtra(RECIPE_INSTRUCTIONS, descriptions[itemPosition]);
+                intent.putExtra(RECIPE_INGREDIENTS, ingredients[itemPosition]);
+                intent.putExtra(RECIPE_INSTRUCTIONS, instructions[itemPosition]);
                 context.startActivity(intent);
             }
         });

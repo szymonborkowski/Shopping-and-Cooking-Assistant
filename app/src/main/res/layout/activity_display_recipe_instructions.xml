@@ -10,28 +10,101 @@
         android:id="@+id/recipeNameTV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/grey"
+        android:background="@color/purple_200"
+        android:padding="8dp"
         android:text="@string/recipe_name_placeholder"
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:padding="8dp"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/recipeInstructionsTV"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="@string/recipe_instructions_placeholder"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/ingredientsTitleTV"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Ingredients:"
+        android:textSize="24sp"
         app:layout_constraintTop_toBottomOf="@+id/recipeNameTV" />
 
+    <TextView
+        android:id="@+id/ingredientsListTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:lineSpacingExtra="2sp"
+        android:padding="5dp"
+        android:text="Ingredient 1..."
+        android:textSize="18sp"
+        android:textColor="@color/dark_grey_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ingredientsTitleTV" />
+
+    <TextView
+        android:id="@+id/instructionsTitleTV"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Instructions:"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@id/ingredientsListTV" />
+
+    <TextView
+        android:id="@+id/instructionsListTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:lineSpacingExtra="3sp"
+        android:padding="5dp"
+        android:paddingLeft="5dp"
+        android:text="Step 1..."
+        android:textSize="16sp"
+        android:textColor="@color/dark_grey_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/instructionsTitleTV" />
+
+    <Button
+        android:id="@+id/cook_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="COOK THIS RECIPE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

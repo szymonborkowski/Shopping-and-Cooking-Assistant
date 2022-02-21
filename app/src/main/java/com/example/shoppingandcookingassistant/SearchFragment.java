@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -106,6 +107,15 @@ public class SearchFragment extends Fragment {
                 if(newText.equals(""))
                     arrayAdapter.getFilter().filter(newText);
                 return false;
+            }
+        });
+
+        Button filterButton = view.findViewById(R.id.filtersButton);
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), ChooseSearchFiltersActivity.class);
+                startActivity(intent);
             }
         });
     }

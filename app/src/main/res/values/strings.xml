@@ -56,5 +56,9 @@
     <string name="password">Password ("pass")</string>
     <string name="login">Login</string>
     <string name="remove_icon">remove icon</string>
+    <string name="instruction_number">Instruction No.</string>
+    <string name="instruction_here">Instruction here...</string>
+    <string name="next_step_button">NEXT STEP</string>
+    <string name="filters">Filters</string>
 
 </resources>
