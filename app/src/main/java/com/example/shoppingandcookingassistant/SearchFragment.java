@@ -3,14 +3,15 @@ package com.example.shoppingandcookingassistant;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,24 +22,24 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class SearchFragment extends Fragment {
 
     ListView listView;
 
-    // Sample recipes:
-    String[] recipes = {"Spaghetti", "Vegetable soup", "Curry", "Noodles",
-                        "Lasagna", "Burger", "Steak pie", "Fish and chips",
-                        "Steak", "Ravioli", "Pasta", "Chicken", "Curry",
-                        "Trout", "Salmon", "Potato and egg pie", "Poached Eggs"};
-
-    // Sample instructions:
-    String[] instructions = {"Spaghetti instructions", "Vegetable soup instructions",
-            "Curry instructions", "Noodles instructions", "Lasagna instructions",
-            "Burger instructions", "Steak pie instructions", "Fish and chips instructions",
-            "Steak instructions", "Ravioli instructions", "Pasta instructions",
-            "Chicken instructions", "Curry instructions",
-            "Trout instructions", "Salmon instructions", "Potato and egg pie instructions",
-            "Poached Eggs instructions"};
+    ArrayList<String> recipeNames;
+    ArrayList<String> recipeInstructions;
 
     /*
      * It's a good practice to define keys for intent extras with your app's package name as a prefix.
@@ -49,6 +50,10 @@ public class SearchFragment extends Fragment {
     public static final String RECIPE_INSTRUCTIONS = "com.example.shoppingandcookingassistant.RECIPE_INSTRUCTIONS";
 
     ArrayAdapter<String> arrayAdapter;
+
+    TextView chosenFiltersTV;
+
+    ArrayList<String> selectedCuisineFilters;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -73,10 +78,13 @@ public class SearchFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        listView = view.findViewById(R.id.listView);  // Displays list of recipes
+        recipeNames = new ArrayList<>();
+        recipeInstructions = new ArrayList<>();
+
+        listView = view.findViewById(R.id.recipeListView);  // Displays list of recipes
         arrayAdapter = new ArrayAdapter<>(getActivity(),
                                           R.layout.support_simple_spinner_dropdown_item,
-                                          recipes);
+                                          recipeNames);
         listView.setAdapter(arrayAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -88,15 +96,15 @@ public class SearchFragment extends Fragment {
             }
         });
 
+        // Search:
         SearchView searchView = view.findViewById(R.id.searchRecipeView);
         searchView.setQueryHint("Type here to search");  // Hint for user
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             // Called when user types in some text and presses 'Enter'
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // results get displayed
-                arrayAdapter.getFilter().filter(query);
+                // Insert SQL query here:
+                fetchRecipes(query, LogInScreenActivity.LOGGED_IN_USER_ID);
                 return false;
             }
 
@@ -104,8 +112,7 @@ public class SearchFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 // If text bar is empty reset to whole list
-                if(newText.equals(""))
-                    arrayAdapter.getFilter().filter(newText);
+                if(newText.equals("")) arrayAdapter.getFilter().filter(newText);
                 return false;
             }
         });
@@ -115,9 +122,35 @@ public class SearchFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), ChooseSearchFiltersActivity.class);
-                startActivity(intent);
+                activityResultLauncher.launch(intent);
             }
+
+            ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult>() {
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+                            Intent intent = result.getData();
+                            // retrieve filters?
+                            // intent.getStringArrayListExtra()
+                            // intent.getBooleanArrayExtra()
+
+                            selectedCuisineFilters = new ArrayList<>();
+                            selectedCuisineFilters =
+                                    intent.getStringArrayListExtra(ChooseSearchFiltersActivity.CUISINE_FILTERS);
+
+                            String message = "Filters: ";
+                            for(String filter : selectedCuisineFilters) {
+                                message += filter + ", ";
+                            }
+
+                            chosenFiltersTV.setText(message);
+                        }
+                    }
+            );
         });
+
+        chosenFiltersTV = view.findViewById(R.id.chosenFiltersTV);
     }
 
     public void openRecipe(View view, int pos) {
@@ -125,9 +158,55 @@ public class SearchFragment extends Fragment {
         Intent intent = new Intent(getActivity(), DisplayRecipeInstructions.class);
 
         // pass in values from the chosen recipe:
-        intent.putExtra(RECIPE_NAME, recipes[pos]);
-        intent.putExtra(RECIPE_INSTRUCTIONS, instructions[pos]);
+        intent.putExtra(RECIPE_NAME, recipeNames.get(pos));
+        intent.putExtra(RECIPE_INSTRUCTIONS, recipeInstructions.get(pos));
 
         startActivity(intent);
+    }
+
+    public void fetchRecipes(String query, String userID) {
+        String url = "https://easyshoppingeasycooking.eu.ngrok.io/saca_network/queryRecipe.php";
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+
+        //This is for error handling of the responses
+        StringRequest request = new StringRequest(Request.Method.POST, url, response -> {
+            try {
+                // on below line passing our response to json object.
+                System.out.println(response); //For checking the response if there is an error
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getString("recipeName0") == null) {
+                    Toast.makeText(getActivity(), "No recipes of this name found.", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    int size = Integer.parseInt(jsonObject.getString("size"));
+                    recipeNames.clear();
+                    recipeInstructions.clear();
+
+                    for(int i = 0; i < size; i++) {
+                        recipeNames.add(jsonObject.getString("recipeName" + i));
+                        recipeInstructions.add(jsonObject.getString("instructions" + i));
+                    }
+
+                    arrayAdapter.getFilter().filter(query);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> Toast.makeText(getActivity(), "ERR: " + error, Toast.LENGTH_SHORT).show()) {
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                // below line we are creating a map for storing our values in key and value pair.
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("uID", userID);
+                // at last we are returning our params.
+                return params;
+            }
+        };
+        queue.add(request);
     }
 }

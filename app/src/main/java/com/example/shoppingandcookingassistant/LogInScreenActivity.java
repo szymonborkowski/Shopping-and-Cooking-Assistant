@@ -26,6 +26,8 @@ public class LogInScreenActivity extends AppCompatActivity {
     private String passwordFromDB;
     private EditText passwordET;
 
+    public static String LOGGED_IN_USER_ID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,67 +61,67 @@ public class LogInScreenActivity extends AppCompatActivity {
     }
 
     public void getPasswordFromDB(String input) {
-        String url = "http://(ip address here)/saca_network/login.php";
+        String url = "https://easyshoppingeasycooking.eu.ngrok.io/saca_network/login.php";
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest request = new StringRequest(Request.Method.POST, url, response -> {
+            try {
+                System.out.println(response);
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getString("password0") == null) {
+                    Toast.makeText(getApplicationContext(), "Please enter valid username.", Toast.LENGTH_SHORT).show();
+                } else {
+                    passwordFromDB = jsonObject.getString("password0");
 
-        // on below line we are calling a string
-        // request method to post the data to our API
-        // in this we are calling a post method.
-        StringRequest request = new StringRequest(Request.Method.POST, url, new com.android.volley.Response.Listener<String>() { //@@@
-            @Override
-            public void onResponse(String response) { //@@@
-                try {
-                    // on below line passing our response to json object.
-                    System.out.println(response); //For checking the response if there is an error
-                    JSONObject jsonObject = new JSONObject(response); //@@@
-                    if (jsonObject.getString("password") == null) {
-                        Toast.makeText(getApplicationContext(), "Please enter valid username.", Toast.LENGTH_SHORT).show();
+                    if(BCrypt.checkpw(passwordET.getText().toString(), passwordFromDB)) {
+                        Toast.makeText(getApplicationContext(), "Successful Login", Toast.LENGTH_SHORT).show();
+                        getLoggedInUserID(input);
                     } else {
-                        /*
-                         * This is where the sql results will be handled/displayed.
-                         * The code for the application will be different here, depending on the design of the app.
-                         * use jsonObject.getString(String columnName) to return a string object of the desired results
-                         */
-
-                        // username is a varchar(50)
-                        // password is a varchar(50)
-
-                        passwordFromDB = jsonObject.getString("password");
-
-                        if(BCrypt.checkpw(passwordET.getText().toString(), passwordFromDB)) {
-                            Toast.makeText(getApplicationContext(), "Successful Login", Toast.LENGTH_SHORT).show();
-                            finish();  // close the activity
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Incorrect password/username", Toast.LENGTH_SHORT).show();
-                        }
+                        Toast.makeText(getApplicationContext(), "Incorrect password/username", Toast.LENGTH_SHORT).show();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        }, new com.android.volley.Response.ErrorListener() { //This is for error handling of the responses
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "ERR: " + error, Toast.LENGTH_SHORT).show();
-            }
-        }) {
+        }, error -> Toast.makeText(getApplicationContext(), "ERR: " + error, Toast.LENGTH_SHORT).show()) {
             @Override
             public String getBodyContentType() {
                 return "application/x-www-form-urlencoded; charset=UTF-8";
             }
-
             @Override
             protected Map<String, String> getParams() {
-                // below line we are creating a map for storing our values in key and value pair.
                 Map<String, String> params = new HashMap<String, String>();
-                /*
-                 * Below are all of the input parameters for the php file.
-                 * In this example it is the user id.
-                 * if we were trying to fetch the user id from username we would write:
-                 *      params.put("username", input);
-                 */
                 params.put("username", input);
-                // at last we are returning our params.
+                return params;
+            }
+        };
+        queue.add(request);
+    }
+
+    public void getLoggedInUserID(String username) {
+        String url = "https://easyshoppingeasycooking.eu.ngrok.io/saca_network/getUserID.php";
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest request = new StringRequest(Request.Method.POST, url, response -> {
+            try {
+                System.out.println(response);
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getString("uID0") == null) {
+                    Toast.makeText(getApplicationContext(), "Please enter valid username.", Toast.LENGTH_SHORT).show();
+                } else {
+                    LOGGED_IN_USER_ID = jsonObject.getString("uID0");
+                    finish();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> Toast.makeText(getApplicationContext(), "ERR: " + error, Toast.LENGTH_SHORT).show()) {
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("username", username);
                 return params;
             }
         };

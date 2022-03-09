@@ -9,16 +9,22 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,9 +37,11 @@ import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class CalendarFragment extends Fragment {
 
@@ -42,6 +50,7 @@ public class CalendarFragment extends Fragment {
     FloatingActionButton addRecipeBtn;
     String date;
     String message;
+    int numPickerVal;
 
     public static final String CHOSEN_DATE = "com.example.calendarexperiment.DATE";
 
@@ -51,8 +60,12 @@ public class CalendarFragment extends Fragment {
     ArrayList<String> names;
     ArrayList<String> portions;
     ArrayList<String> daysLeft;
+    ArrayList<String> instructions;
 
     Map<String, ArrayList<Meal>> plannedMealsForDate;
+
+    FloatingActionButton addShoppingListBtn;
+    TextView testingTV;
 
     public CalendarFragment() {
         // Required empty public constructor
@@ -136,13 +149,15 @@ public class CalendarFragment extends Fragment {
                     new ActivityResultCallback<ActivityResult>() {
                         @Override
                         public void onActivityResult(ActivityResult result) {
+                            if(Objects.isNull(result.getData())) return;
                             Intent intent = result.getData();
                             // retrieve name, portions, days left
                             String nameBuff = intent.getStringExtra(AddRecipeEvent.CHOSEN_RECIPE);
                             String portionsBuff = intent.getStringExtra(AddRecipeEvent.PORTIONS);
                             String daysLeftBuff = intent.getStringExtra(AddRecipeEvent.DAYS_LEFT);
+                            String instructionsBuff = intent.getStringExtra(AddRecipeEvent.CHOSEN_RECIPE_INSTRUCTIONS);
 
-                            Meal newMeal = new Meal(nameBuff, portionsBuff, daysLeftBuff);
+                            Meal newMeal = new Meal(nameBuff, portionsBuff, daysLeftBuff, instructionsBuff);
 
                             ArrayList<Meal> newPlannedMeals;
 
@@ -163,12 +178,26 @@ public class CalendarFragment extends Fragment {
         names = new ArrayList<>();
         portions = new ArrayList<>();
         daysLeft = new ArrayList<>();
+        instructions = new ArrayList<>();
+
         plannedMealsListRV = view.findViewById(R.id.plannedMealsRV);
 
-        rvAdapter = new PlannedMealsRVAdapter(getActivity(), names, portions, daysLeft, plannedMealsForDate, date);
+        rvAdapter = new PlannedMealsRVAdapter(getActivity(), names, portions, daysLeft, plannedMealsForDate, date, instructions);
 
         plannedMealsListRV.setAdapter(rvAdapter);
         plannedMealsListRV.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        // *** ADD SHOPPING LIST BUTTON ***
+        addShoppingListBtn = view.findViewById(R.id.addShoppingListBtn);
+        addShoppingListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // open an activity
+                showPopupWindow(view);
+            }
+        });
+
+
     }
 
     public void updateRV() {
@@ -192,5 +221,104 @@ public class CalendarFragment extends Fragment {
             daysLeft.remove(i);
             rvAdapter.notifyItemRemoved(i);
         }
+    }
+
+    public void showPopupWindow(final View view) {
+
+
+        //Create a View object yourself through inflater
+        LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.add_shopping_list_cardview, null);
+
+        //Number picker
+        NumberPicker picker = popupView.findViewById(R.id.numberPicker);
+        picker.setMaxValue(7);
+        picker.setMinValue(1);
+        String[] pickerValues = {"1", "2", "3", "4", "5", "6", "7"};
+        picker.setDisplayedValues(pickerValues);
+        picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                numPickerVal = picker.getValue();
+            }
+        });
+
+        //Specify the length and width through constants
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+
+        //Make Inactive Items Outside Of PopupWindow
+        boolean focusable = true;
+
+        //Create a window with our parameters
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        //Set the location of the window on the screen
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        //Initialize the elements of our window, install the handler
+        TextView daysQuestionTV = popupView.findViewById(R.id.daysQuestionTV);
+
+        // Close window
+        FloatingActionButton closeBtn = popupView.findViewById(R.id.closePopUpBtn);
+        closeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupWindow.dismiss();
+            }
+        });
+
+        // Test TV
+        testingTV = popupView.findViewById(R.id.testingTV);
+
+        // Add shopping list:
+        Button saveShoppingListBtn = popupView.findViewById(R.id.saveShoppingListBtn);
+        saveShoppingListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                // take value from number picker
+                // (numPickerVal)
+
+                // look at saved recipes for each day
+                // 'date' - today's date
+
+                // variable = Expression1 ? Expression2: Expression3
+                int chosenVal = Objects.isNull(numPickerVal) ? 1 : numPickerVal;
+                ArrayList<String> recipeNames = new ArrayList<>();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                for (int i = 0; i < chosenVal; i++) {
+                    Calendar c = Calendar.getInstance();
+                    c.add(Calendar.DATE, i);
+                    date = dateFormat.format(c.getTime());
+                    if (plannedMealsForDate.containsKey(date)) {
+                        // parse ingredients
+                        for(Meal meal : Objects.requireNonNull(plannedMealsForDate.get(date))) {
+                            String queryRecipe = meal.getInstructions();
+                            recipeNames.add(queryRecipe);
+                        }
+                        // recipe . getIngredients
+                        // send query for each recipe based on name?
+                        // recipeNames.add();
+
+                    }
+                }
+                testingTV.setText(recipeNames.toString());
+                // parse how much ingredients from each recipe
+
+                // minus the ingredients user already has
+
+                // compile into shopping list
+
+                // save
+            }
+        });
+
+
+    }
+
+    public void getIngredients(String recipeName) {
+
     }
 }

@@ -34,7 +34,7 @@
         app:layout_constraintTop_toBottomOf="@+id/filterWordTV" />
 
     <CheckBox
-        android:id="@+id/checkBox1"
+        android:id="@+id/italianFood_CB"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -45,7 +45,7 @@
         app:layout_constraintTop_toBottomOf="@+id/cuisineWordTV" />
 
     <CheckBox
-        android:id="@+id/checkBox2"
+        android:id="@+id/asianFood_CB"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -54,6 +54,17 @@
         android:onClick="onCheckboxClicked"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkBox1" />
+        app:layout_constraintTop_toBottomOf="@+id/italianFood_CB" />
+
+    <Button
+        android:id="@+id/saveFiltersBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="52dp"
+        android:text="save filters"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

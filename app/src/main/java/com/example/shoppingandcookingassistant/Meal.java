@@ -5,11 +5,13 @@ public class Meal {
     private String name;
     private String portions;
     private String daysLeft;
+    private String ingredients;
 
-    public Meal(String name, String portions, String daysLeft) {
+    public Meal(String name, String portions, String daysLeft, String ingredients) {
         this.name = name;
         this.portions = portions;
         this.daysLeft = daysLeft;
+        this.ingredients = ingredients;
     }
 
     public String getName() {
@@ -34,5 +36,9 @@ public class Meal {
 
     public void setDaysLeft(String daysLeft) {
         this.daysLeft = daysLeft;
+    }
+
+    public String getInstructions() {
+        return ingredients;
     }
 }

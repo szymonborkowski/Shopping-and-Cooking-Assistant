@@ -2,6 +2,8 @@ package com.example.shoppingandcookingassistant;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +50,6 @@ public class BasketFragment extends Fragment {
     private static final int CAMERA_REQUEST = 101;
 
     Activity activity;
-
     public BasketFragment() {
         // Required empty public constructor
     }
@@ -64,9 +66,18 @@ public class BasketFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         activity = getActivity();
         View root = inflater.inflate(R.layout.fragment_basket, container, false);
+
+        Button finishShopBtn = root.findViewById(R.id.finishShopBtn);
+        finishShopBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // add to inventory
+                saveArray(basketContents.toArray(new String[0]), "barcodes");
+                Toast.makeText(getActivity(), "Ingredients added", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // List of scanned items:
         basketContents = new ArrayList<>();
@@ -101,6 +112,8 @@ public class BasketFragment extends Fragment {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        // TODO: run SQL query on each barcode scanned to retrieve name and add name to list
+
                         // If the same barcode is scanned, check if the timer has been started
                         // if not, start the timer
                         if(Objects.isNull(previousResult)) {
@@ -169,5 +182,14 @@ public class BasketFragment extends Fragment {
     public void onPause() {
         codeScanner.releaseResources();
         super.onPause();
+    }
+
+    public void saveArray(String[] array, String arrayName) {
+        SharedPreferences preferences = getContext().getSharedPreferences("com.example.shoppingandcookingassistant.INGREDIENTS", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(arrayName + "_size", array.length);
+        for(int i = 0; i < array.length; i++)
+            editor.putString(arrayName + "_" + i, array[i]);
+        editor.apply();
     }
 }

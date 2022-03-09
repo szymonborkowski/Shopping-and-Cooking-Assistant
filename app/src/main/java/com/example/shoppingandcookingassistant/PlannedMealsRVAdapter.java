@@ -16,7 +16,7 @@ import java.util.Map;
 public class PlannedMealsRVAdapter extends RecyclerView.Adapter<PlannedMealsRVAdapter.MealsRVViewHolder> {
 
     Context context;
-    ArrayList<String> names, portions, daysLeft;
+    ArrayList<String> names, portions, daysLeft, instructions;
     MealsRVViewHolder mealsRVViewHolder;
     Map<String, ArrayList<Meal>> plannedMealsForDate;
     String date;
@@ -24,13 +24,14 @@ public class PlannedMealsRVAdapter extends RecyclerView.Adapter<PlannedMealsRVAd
     public PlannedMealsRVAdapter(Context context, ArrayList<String> names,
                                  ArrayList<String> portions, ArrayList<String> daysLeft,
                                  Map<String, ArrayList<Meal>> plannedMealsForDate,
-                                 String date) {
+                                 String date, ArrayList<String> instructions) {
         this.context = context;
         this.names = names;
         this.portions = portions;
         this.daysLeft = daysLeft;
         this.plannedMealsForDate = plannedMealsForDate;
         this.date = date;
+        this.instructions = instructions;
     }
 
     @NonNull
@@ -60,6 +61,7 @@ public class PlannedMealsRVAdapter extends RecyclerView.Adapter<PlannedMealsRVAd
                 names.remove(position);
                 portions.remove(position);
                 daysLeft.remove(position);
+                instructions.remove(position);
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, getItemCount());
 
@@ -67,7 +69,7 @@ public class PlannedMealsRVAdapter extends RecyclerView.Adapter<PlannedMealsRVAd
                 // on new ArrayLists
                 ArrayList<Meal> newPlannedMeals = new ArrayList<>();
                 for(int i = 0; i < names.size(); i++) {
-                    newPlannedMeals.add(new Meal(names.get(i), portions.get(i), daysLeft.get(i)));
+                    newPlannedMeals.add(new Meal(names.get(i), portions.get(i), daysLeft.get(i), instructions.get(i)));
                 }
                 plannedMealsForDate.put(date, newPlannedMeals);
             }

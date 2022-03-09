@@ -9,11 +9,26 @@
         <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.3675" />
         <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.3675" />
         <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/drawable/ic_baseline_shopping_basket_24.xml" value="0.3675" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/activity_add_recipe_event.xml" value="0.30462962962962964" />
         <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/activity_choose_search_filters.xml" value="0.25" />
         <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/activity_display_recipe_instructions.xml" value="0.36666666666666664" />
         <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/activity_display_specific_instruction.xml" value="0.25" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/activity_inventory.xml" value="0.36666666666666664" />
         <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/activity_log_in_screen.xml" value="0.36666666666666664" />
-        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/fragment_search.xml" value="0.36666666666666664" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/activity_search_recipe.xml" value="0.37083333333333335" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/activity_shopping_lists.xml" value="0.36666666666666664" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/activity_user_details.xml" value="0.33585858585858586" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/add_shopping_list_cardview.xml" value="0.36666666666666664" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/calendar_shopping_list_cardview.xml" value="0.365625" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/fragment_basket.xml" value="0.36666666666666664" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/fragment_calendar.xml" value="0.36666666666666664" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/fragment_home.xml" value="0.36666666666666664" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/fragment_search.xml" value="0.20066889632107024" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/fragment_user.xml" value="0.36666666666666664" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/home_recipe_cardview.xml" value="0.25" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/ingredient_row.xml" value="0.3375" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/item_row.xml" value="0.3385416666666667" />
+        <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/layout/number_selector.xml" value="0.36666666666666664" />
         <entry key="..\:/szymo/Documents/3rd-Year-ECE/3rd-Year-Project/ShoppingAndCookingAssistant/Shopping-and-Cooking-Assistant/app/src/main/res/menu/bottom_navigation_bar.xml" value="0.36666666666666664" />
       </map>
     </option>

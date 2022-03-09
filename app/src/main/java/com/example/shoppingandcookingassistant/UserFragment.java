@@ -1,5 +1,6 @@
 package com.example.shoppingandcookingassistant;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,14 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class UserFragment extends Fragment {
-
-    RecyclerView recyclerView;
-    UserDetailsRVAdapter rvAdapter;
-    String[] titles, descriptions;
-    Button updateDetails;
 
     public UserFragment() {
         // Required empty public constructor
@@ -44,25 +41,41 @@ public class UserFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        recyclerView = view.findViewById(R.id.recyclerView);
+        TextView userDetailsTV, inventoryTV, shoppingListsTV, signOutTV;
 
-        titles = getResources().getStringArray(R.array.user_details_titles);
-        // titles = view.getResources().getStringArray(R.array.user_details);
-        descriptions = getResources().getStringArray(R.array.user_details_entries);
+        userDetailsTV = view.findViewById(R.id.userDetailsTV);
+        inventoryTV = view.findViewById(R.id.inventoryTV);
+        shoppingListsTV = view.findViewById(R.id.shoppingListsTV);
+        signOutTV = view.findViewById(R.id.signOutTV);
 
-        rvAdapter = new UserDetailsRVAdapter(getActivity(), titles, descriptions);
-
-        recyclerView.setAdapter(rvAdapter);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        updateDetails = view.findViewById(R.id.updateButton);
-
-        updateDetails.setOnClickListener(new View.OnClickListener() {
+        userDetailsTV.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                // Insert SQL update command here
-                Toast.makeText(getActivity(), "Details updated", Toast.LENGTH_SHORT).show();
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), UserDetailsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        inventoryTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), InventoryActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        shoppingListsTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), ShoppingListsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        signOutTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // add sign-out functionality
             }
         });
 

@@ -8,18 +8,25 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class AddRecipeEvent extends AppCompatActivity {
 
     Button saveRecipe;
 
-    EditText recipeName;
+    TextView recipeName;
     TextView lastDate;
     TextView totalPortions;
+    Button changeRecipeBtn;
+    String chosenRecipeInstructions;
 
     CalendarHorizontalNumberSelector daysSelector;
     PortionHorizontalNumberSelector portionsSelector;
@@ -27,6 +34,7 @@ public class AddRecipeEvent extends AppCompatActivity {
     public static final String CHOSEN_RECIPE = "com.example.calendarexperiment.CHOSEN_RECIPE";
     public static final String PORTIONS = "com.example.calendarexperiment.PORTIONS";
     public static final String DAYS_LEFT = "com.example.calendarexperiment.DAYS_LEFT";
+    public static final String CHOSEN_RECIPE_INSTRUCTIONS = "com.example.calendarexperiment.CHOSEN_RECIPE_INSTRUCTIONS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +54,13 @@ public class AddRecipeEvent extends AppCompatActivity {
                 addRecipe.putExtra(CHOSEN_RECIPE, recipeName.getText().toString());
                 addRecipe.putExtra(PORTIONS, totalPortions.getText());
                 addRecipe.putExtra(DAYS_LEFT, String.valueOf(daysSelector.getNumber()));
+                addRecipe.putExtra(CHOSEN_RECIPE_INSTRUCTIONS, chosenRecipeInstructions);
                 setResult(Activity.RESULT_OK, addRecipe);
                 finish();
             }
         });
 
-        recipeName = findViewById(R.id.recipeSearchView);
+        recipeName = findViewById(R.id.chosenRecipeTV);
 
         lastDate = findViewById(R.id.lastDateTV);
         totalPortions = findViewById(R.id.portionsTV);
@@ -73,5 +82,30 @@ public class AddRecipeEvent extends AppCompatActivity {
 
         String message = "Total portions: 1";
         totalPortions.setText(message);
+
+        changeRecipeBtn = findViewById(R.id.changeRecipeBtn);
+        changeRecipeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), SearchRecipeActivity.class);
+                activityResultLauncher.launch(intent);
+
+                // on result get chosen recipe
+
+                // TODO: ON RESULT METHOD SET TV TO XYZ
+            }
+            ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult>() {
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+                            Intent intent = result.getData();
+                            String selectedRecipe = intent.getStringExtra(SearchRecipeActivity.SELECTED_RECIPE_BY_USER);
+                            chosenRecipeInstructions = intent.getStringExtra(SearchRecipeActivity.SELECTED_RECIPE_INGREDIENTS);
+                            recipeName.setText(selectedRecipe);
+                        }
+                    }
+            );
+        });
     }
 }

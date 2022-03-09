@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ public class HomeFragment extends Fragment {
 
     RecyclerView homeRecommendationFeed;
     HomeRecipeRVAdapter rvAdapter;
+    ImageView recipeImage;
 
     // Temporary sample arrays of names and descriptions:
     String[] recipeNames = {"Baked Feta Pasta"};
@@ -70,6 +72,9 @@ public class HomeFragment extends Fragment {
 
         homeRecommendationFeed.setAdapter(rvAdapter);
         homeRecommendationFeed.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        recipeImage = view.findViewById(R.id.imageView);
+        // recipeImage.setImageBitmap();
     }
 
     public void getHomeFeedFromDatabase() {
