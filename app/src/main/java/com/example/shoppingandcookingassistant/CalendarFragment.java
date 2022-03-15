@@ -1,6 +1,8 @@
 package com.example.shoppingandcookingassistant;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResult;
@@ -29,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -60,12 +63,12 @@ public class CalendarFragment extends Fragment {
     ArrayList<String> names;
     ArrayList<String> portions;
     ArrayList<String> daysLeft;
-    ArrayList<String> instructions;
+    ArrayList<Ingredient> ingredientsList;
+    ArrayList<ArrayList<Ingredient>> ingredientsForEachMeal;
 
     Map<String, ArrayList<Meal>> plannedMealsForDate;
 
     FloatingActionButton addShoppingListBtn;
-    TextView testingTV;
 
     public CalendarFragment() {
         // Required empty public constructor
@@ -75,9 +78,31 @@ public class CalendarFragment extends Fragment {
         return new CalendarFragment();
     }
 
+    // TODO: https://developer.android.com/guide/fragments/saving-state
+
+    /**
+     * This method is used to restore any saved variables if there is any.
+     * @param savedInstanceState the Bundle which stores the variables.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        loadMap();
+
+    }
+
+    /**
+     * This method is used to retain easily-serialized data.
+     * @param outState the Bundle which stores the variables.
+     */
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // ...
+
+        saveMap();
     }
 
     @Override
@@ -89,7 +114,6 @@ public class CalendarFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        plannedMealsForDate = new HashMap<>();
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         date = sdf.format(new Date(System.currentTimeMillis()));  // setting date value to today
@@ -155,9 +179,15 @@ public class CalendarFragment extends Fragment {
                             String nameBuff = intent.getStringExtra(AddRecipeEvent.CHOSEN_RECIPE);
                             String portionsBuff = intent.getStringExtra(AddRecipeEvent.PORTIONS);
                             String daysLeftBuff = intent.getStringExtra(AddRecipeEvent.DAYS_LEFT);
-                            String instructionsBuff = intent.getStringExtra(AddRecipeEvent.CHOSEN_RECIPE_INSTRUCTIONS);
+                            ArrayList<String> ingredientNamesBuff = intent.getStringArrayListExtra(AddRecipeEvent.CHOSEN_RECIPE_INGREDIENT_NAMES);
+                            ArrayList<String> ingredientAmountsBuff = intent.getStringArrayListExtra(AddRecipeEvent.CHOSEN_RECIPE_INGREDIENT_AMOUNTS);
 
-                            Meal newMeal = new Meal(nameBuff, portionsBuff, daysLeftBuff, instructionsBuff);
+                            ingredientsList = new ArrayList<>();
+                            for(int i = 0; i < ingredientNamesBuff.size(); i++) {
+                                ingredientsList.add(new Ingredient(ingredientNamesBuff.get(i), ingredientAmountsBuff.get(i)));
+                            }
+
+                            Meal newMeal = new Meal(nameBuff, portionsBuff, daysLeftBuff, ingredientsList);
 
                             ArrayList<Meal> newPlannedMeals;
 
@@ -178,11 +208,12 @@ public class CalendarFragment extends Fragment {
         names = new ArrayList<>();
         portions = new ArrayList<>();
         daysLeft = new ArrayList<>();
-        instructions = new ArrayList<>();
+        ingredientsList = new ArrayList<>();
+        ingredientsForEachMeal = new ArrayList<>();
 
         plannedMealsListRV = view.findViewById(R.id.plannedMealsRV);
 
-        rvAdapter = new PlannedMealsRVAdapter(getActivity(), names, portions, daysLeft, plannedMealsForDate, date, instructions);
+        rvAdapter = new PlannedMealsRVAdapter(getActivity(), names, portions, daysLeft, plannedMealsForDate, date, ingredientsForEachMeal);
 
         plannedMealsListRV.setAdapter(rvAdapter);
         plannedMealsListRV.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -197,6 +228,8 @@ public class CalendarFragment extends Fragment {
             }
         });
 
+        clearRV();
+        updateRV();
 
     }
 
@@ -208,6 +241,7 @@ public class CalendarFragment extends Fragment {
                 names.add(meal.getName());
                 portions.add(meal.getPortions());
                 daysLeft.add(meal.getDaysLeft());
+                ingredientsForEachMeal.add(meal.getIngredients());
                 rvAdapter.notifyItemInserted(i++);
             }
         }
@@ -219,13 +253,12 @@ public class CalendarFragment extends Fragment {
             names.remove(i);
             portions.remove(i);
             daysLeft.remove(i);
+            ingredientsForEachMeal.remove(i);
             rvAdapter.notifyItemRemoved(i);
         }
     }
 
     public void showPopupWindow(final View view) {
-
-
         //Create a View object yourself through inflater
         LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.add_shopping_list_cardview, null);
@@ -268,9 +301,6 @@ public class CalendarFragment extends Fragment {
             }
         });
 
-        // Test TV
-        testingTV = popupView.findViewById(R.id.testingTV);
-
         // Add shopping list:
         Button saveShoppingListBtn = popupView.findViewById(R.id.saveShoppingListBtn);
         saveShoppingListBtn.setOnClickListener(new View.OnClickListener() {
@@ -285,40 +315,83 @@ public class CalendarFragment extends Fragment {
                 // 'date' - today's date
 
                 // variable = Expression1 ? Expression2: Expression3
-                int chosenVal = Objects.isNull(numPickerVal) ? 1 : numPickerVal;
-                ArrayList<String> recipeNames = new ArrayList<>();
+                int chosenVal = numPickerVal > 0 ? 1 : numPickerVal;
+                String recipeNames = "";
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                for (int i = 0; i < chosenVal; i++) {
+
+                ArrayList<Ingredient> ingredientsForAllMeals = new ArrayList<>();
+                ArrayList<String> names = new ArrayList<>();
+
+                for (int i = 0; i <= chosenVal; i++) {
                     Calendar c = Calendar.getInstance();
                     c.add(Calendar.DATE, i);
                     date = dateFormat.format(c.getTime());
                     if (plannedMealsForDate.containsKey(date)) {
                         // parse ingredients
                         for(Meal meal : Objects.requireNonNull(plannedMealsForDate.get(date))) {
-                            String queryRecipe = meal.getInstructions();
-                            recipeNames.add(queryRecipe);
+                            for(Ingredient ingredient : meal.getIngredients()) {
+                                if(names.contains(ingredient.getName())) {
+                                    ingredientsForAllMeals.get(names.indexOf(ingredient.getName())).increaseAmount(ingredient.getAmountInt());
+                                } else {
+                                    names.add(ingredient.getName());
+                                    ingredientsForAllMeals.add(ingredient);
+                                }
+                            }
                         }
-                        // recipe . getIngredients
-                        // send query for each recipe based on name?
-                        // recipeNames.add();
-
                     }
                 }
-                testingTV.setText(recipeNames.toString());
-                // parse how much ingredients from each recipe
 
-                // minus the ingredients user already has
+                ShoppingList shoppingList = new ShoppingList(getContext(), ingredientsForAllMeals);
 
-                // compile into shopping list
-
-                // save
+                Toast.makeText(getContext(), "Shopping List added", Toast.LENGTH_SHORT).show();
             }
         });
 
 
     }
 
-    public void getIngredients(String recipeName) {
+    public void saveMap() {
+        Toast.makeText(getContext(), "Saving map", Toast.LENGTH_SHORT).show();
+
+        SharedPreferences preferences = getContext().getSharedPreferences("com.example.shoppingandcookingassistant.MEALS_MAP", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        Gson gson = new Gson();
+
+        // main loop to iterate over each saved date
+        int i = 0;
+        editor.putInt("date_amount", plannedMealsForDate.size());  // how many dates
+        for(Map.Entry<String, ArrayList<Meal>> entry : plannedMealsForDate.entrySet()) {  // each date in map
+            String dateKey = "date_" + i++;
+            editor.putString(dateKey, date);
+            int j = 0;
+            editor.putInt(dateKey + "_meal_amount", entry.getValue().size());  // how many meals
+            for(Meal meal : entry.getValue()) {  // each meal in date
+                editor.putString(dateKey + "_meal_" + j++, gson.toJson(meal));
+            }
+        }
+        editor.apply();
+    }
+
+    public void loadMap() {
+        // This loop looks at the shared preferences for all the entries associated with
+        // a certain date, then the meals for that date, and adds an entry to the map for each
+        // date that it finds saved in the shared preferences.
+
+        Toast.makeText(getContext(), "Loading map", Toast.LENGTH_SHORT).show();
+        SharedPreferences preferences = getContext().getSharedPreferences("com.example.shoppingandcookingassistant.MEALS_MAP", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        plannedMealsForDate = new HashMap<>();
+        int amountOfDates = preferences.getInt("date_amount", 0);
+        for(int i = 0; i < amountOfDates; i++) {
+            String buffDate = preferences.getString("date_" + i, "");
+            int amountOfMealsForDate = preferences.getInt("date_" + i + "_meal_amount", 0);
+            ArrayList<Meal> buffMeals = new ArrayList<>();
+            for(int j = 0; j < amountOfMealsForDate; j++) {
+                String jsonMeal = preferences.getString("date_" + i + "_meal_" + j, "");
+                buffMeals.add(gson.fromJson(jsonMeal, Meal.class));
+            }
+            plannedMealsForDate.put(buffDate, buffMeals);
+        }
 
     }
 }

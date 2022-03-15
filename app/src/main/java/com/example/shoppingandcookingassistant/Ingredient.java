@@ -32,7 +32,7 @@ public class Ingredient {
         switch (unit) {
             case "g":
                 return "grams";
-            case "mL":
+            case "ml":
                 return "millilitres";
             case "":
                 return "units";
@@ -59,8 +59,8 @@ public class Ingredient {
         if(amount.endsWith("g")) {
             unit = "g";
             amountInt = Integer.parseInt(amount.substring(0, amount.indexOf("g")-1));
-        } else if (amount.endsWith("mL")) {
-            unit = "mL";
+        } else if (amount.endsWith("ml")) {
+            unit = "ml";
             amountInt = Integer.parseInt(amount.substring(0, amount.indexOf("m")-1));
         } else {
             unit = "";

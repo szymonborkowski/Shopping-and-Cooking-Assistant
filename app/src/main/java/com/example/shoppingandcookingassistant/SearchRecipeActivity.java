@@ -38,11 +38,11 @@ public class SearchRecipeActivity extends AppCompatActivity {
     Button filtersBtn;
     TextView selectedFilters;
     ArrayList<String> recipeNames;
-    ArrayList<String> recipeInstructions;
+    ArrayList<String> recipeIDs;
     ArrayList<String> selectedCuisineFilters;
     AdapterView.OnItemClickListener userSelectsRecipeListener;
     public static final String SELECTED_RECIPE_BY_USER = "com.example.shoppingandcookingassistant.SELECTED_RECIPE_BY_USER";
-    public static final String SELECTED_RECIPE_INGREDIENTS = "com.example.shoppingandcookingassistant.SELECTED_RECIPE_INGREDIENTS";
+    public static final String SELECTED_RECIPE_ID = "com.example.shoppingandcookingassistant.SELECTED_RECIPE_ID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +68,7 @@ public class SearchRecipeActivity extends AppCompatActivity {
 
         // *** ARRAY ADAPTER ***
         recipeNames = new ArrayList<>();
-        recipeInstructions = new ArrayList<>();
+        recipeIDs = new ArrayList<>();
         arrayAdapter = new ArrayAdapter<>(getApplication(),
                                           R.layout.support_simple_spinner_dropdown_item,
                                           recipeNames);
@@ -79,9 +79,8 @@ public class SearchRecipeActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent chosenRecipe = new Intent();
                 String recipeName = (String)adapterView.getItemAtPosition(i);
-                String recipeInstruction = recipeInstructions.get(recipeNames.indexOf(recipeName));
                 chosenRecipe.putExtra(SELECTED_RECIPE_BY_USER, recipeName);
-                chosenRecipe.putExtra(SELECTED_RECIPE_INGREDIENTS, recipeInstruction);
+                chosenRecipe.putExtra(SELECTED_RECIPE_ID, recipeIDs.get(recipeNames.indexOf(recipeName)));
                 setResult(Activity.RESULT_OK, chosenRecipe);
 
                 finish();
@@ -128,7 +127,7 @@ public class SearchRecipeActivity extends AppCompatActivity {
     }
 
     public void fetchRecipes(String query, String userID) {
-        String url = "https://easyshoppingeasycooking.eu.ngrok.io/saca_network/queryRecipe.php";
+        String url = "https://easyshoppingeasycooking.eu.ngrok.io/saca_network/searchRecipe.php";
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
         //This is for error handling of the responses
@@ -143,11 +142,11 @@ public class SearchRecipeActivity extends AppCompatActivity {
 
                     int size = Integer.parseInt(jsonObject.getString("size"));
                     recipeNames.clear();
-                    recipeInstructions.clear();
+                    recipeIDs.clear();
 
                     for(int i = 0; i < size; i++) {
                         recipeNames.add(jsonObject.getString("recipeName" + i));
-                        recipeInstructions.add(jsonObject.getString("instructions" + i));
+                        recipeIDs.add(jsonObject.getString("rID" + i));
                     }
 
                     arrayAdapter.getFilter().filter(query);

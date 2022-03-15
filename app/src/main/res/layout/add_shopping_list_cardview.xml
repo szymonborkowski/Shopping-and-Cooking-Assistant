@@ -12,20 +12,22 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent"
+        app:cardCornerRadius="20sp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/grey">
+            android:background="#F4F4F4">
 
             <TextView
                 android:id="@+id/daysQuestionTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:text="How many days?"
                 android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
@@ -36,10 +38,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
-                android:text="(If only today, leave days as 1)"
-                android:textSize="12sp"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
+                android:text="(If only today, leave days as 1)"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/daysQuestionTV" />
@@ -49,18 +51,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="45dp"
                 android:text="Days:"
+                android:textColor="#000000"
+                android:textSize="34sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/daysQuestionHintTV" />
 
             <NumberPicker
                 android:id="@+id/numberPicker"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginEnd="32dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="140dp"
+                android:layout_marginEnd="16dp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView7"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView7"
                 app:layout_constraintTop_toTopOf="@+id/textView7" />
 
             <Button
@@ -68,7 +74,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
+                android:layout_marginBottom="16dp"
                 android:text="ADD LIST"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/numberPicker" />
@@ -83,16 +91,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
-
-            <TextView
-                android:id="@+id/testingTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="TextView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/saveShoppingListBtn" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -10,7 +10,6 @@ import android.os.Bundle;
 
 public class InventoryActivity extends AppCompatActivity {
 
-    String[] ingredientNames, ingredientAmounts;
     InventoryRVAdapter rvAdapter;
 
     @Override
@@ -18,23 +17,12 @@ public class InventoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventory);
 
-        //ingredientNames = loadArray("ingredientNames");
-        //ingredientAmounts = loadArray("ingredientAmounts");
-
-        // TODO: Figure out where to save the inventory
-        /*
-         * - After a user finishes a recipe
-         * - After the user shops
-         */
-        // TODO: Add the barcode scanning functionality so I can test the inventory
-
         String[] barcodesFromMemory = loadArray("barcodes");
         rvAdapter = new InventoryRVAdapter(getApplicationContext(), barcodesFromMemory);
 
         RecyclerView inventoryRV = findViewById(R.id.inventoryRV);
         inventoryRV.setAdapter(rvAdapter);
         inventoryRV.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-
 
     }
 
@@ -47,15 +35,5 @@ public class InventoryActivity extends AppCompatActivity {
         for(int i = 0; i < size; i++)
             array[i] = preferences.getString(arrayName + "_" + i, null);
         return array;
-    }
-
-    // TODO: Move this method to where it is needed (eg. Virtual Basket)
-    public void saveArray(String[] array, String arrayName) {
-        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt(arrayName + "_size", array.length);
-        for(int i = 0; i < array.length; i++)
-            editor.putString(arrayName + "_" + i, array[i]);
-        editor.apply();
     }
 }

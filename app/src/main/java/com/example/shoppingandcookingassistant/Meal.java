@@ -1,13 +1,15 @@
 package com.example.shoppingandcookingassistant;
 
+import java.util.ArrayList;
+
 public class Meal {
 
     private String name;
     private String portions;
     private String daysLeft;
-    private String ingredients;
+    private ArrayList<Ingredient> ingredients;
 
-    public Meal(String name, String portions, String daysLeft, String ingredients) {
+    public Meal(String name, String portions, String daysLeft, ArrayList<Ingredient> ingredients) {
         this.name = name;
         this.portions = portions;
         this.daysLeft = daysLeft;
@@ -38,7 +40,19 @@ public class Meal {
         this.daysLeft = daysLeft;
     }
 
-    public String getInstructions() {
+    public ArrayList<Ingredient> getIngredients() {
         return ingredients;
+    }
+
+    @Override
+    public String toString() {
+        String ingredientList = "";
+
+        for(Ingredient ingredient : ingredients) {
+            ingredientList += ingredient.name + " - ";
+            ingredientList += ingredient.amountString + "\n";
+        }
+
+        return ingredientList;
     }
 }

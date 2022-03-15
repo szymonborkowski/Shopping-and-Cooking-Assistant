@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -14,9 +15,19 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddRecipeEvent extends AppCompatActivity {
 
@@ -27,6 +38,9 @@ public class AddRecipeEvent extends AppCompatActivity {
     TextView totalPortions;
     Button changeRecipeBtn;
     String chosenRecipeInstructions;
+    String ingredients;
+    ArrayList<String> ingredientListName;
+    ArrayList<String> ingredientListAmount;
 
     CalendarHorizontalNumberSelector daysSelector;
     PortionHorizontalNumberSelector portionsSelector;
@@ -34,7 +48,8 @@ public class AddRecipeEvent extends AppCompatActivity {
     public static final String CHOSEN_RECIPE = "com.example.calendarexperiment.CHOSEN_RECIPE";
     public static final String PORTIONS = "com.example.calendarexperiment.PORTIONS";
     public static final String DAYS_LEFT = "com.example.calendarexperiment.DAYS_LEFT";
-    public static final String CHOSEN_RECIPE_INSTRUCTIONS = "com.example.calendarexperiment.CHOSEN_RECIPE_INSTRUCTIONS";
+    public static final String CHOSEN_RECIPE_INGREDIENT_NAMES = "com.example.calendarexperiment.CHOSEN_RECIPE_INGREDIENT_NAMES";
+    public static final String CHOSEN_RECIPE_INGREDIENT_AMOUNTS = "com.example.calendarexperiment.CHOSEN_RECIPE_INGREDIENT_AMOUNTS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +69,8 @@ public class AddRecipeEvent extends AppCompatActivity {
                 addRecipe.putExtra(CHOSEN_RECIPE, recipeName.getText().toString());
                 addRecipe.putExtra(PORTIONS, totalPortions.getText());
                 addRecipe.putExtra(DAYS_LEFT, String.valueOf(daysSelector.getNumber()));
-                addRecipe.putExtra(CHOSEN_RECIPE_INSTRUCTIONS, chosenRecipeInstructions);
+                addRecipe.putStringArrayListExtra(CHOSEN_RECIPE_INGREDIENT_NAMES, ingredientListName);
+                addRecipe.putStringArrayListExtra(CHOSEN_RECIPE_INGREDIENT_AMOUNTS, ingredientListAmount);
                 setResult(Activity.RESULT_OK, addRecipe);
                 finish();
             }
@@ -100,12 +116,54 @@ public class AddRecipeEvent extends AppCompatActivity {
                         @Override
                         public void onActivityResult(ActivityResult result) {
                             Intent intent = result.getData();
+                            fetchIngredients(intent.getStringExtra(SearchRecipeActivity.SELECTED_RECIPE_ID));
                             String selectedRecipe = intent.getStringExtra(SearchRecipeActivity.SELECTED_RECIPE_BY_USER);
-                            chosenRecipeInstructions = intent.getStringExtra(SearchRecipeActivity.SELECTED_RECIPE_INGREDIENTS);
                             recipeName.setText(selectedRecipe);
                         }
                     }
             );
         });
+    }
+
+    public void fetchIngredients(String recipeID) {
+        String url = "https://easyshoppingeasycooking.eu.ngrok.io/saca_network/getIngredientsForRecipe.php";
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+
+        //This is for error handling of the responses
+        StringRequest request = new StringRequest(Request.Method.POST, url, response -> {
+            try {
+                // on below line passing our response to json object.
+                System.out.println(response); //For checking the response if there is an error
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getString("name0") == null) {
+                    Toast.makeText(getApplicationContext(), "No recipes of this name found.", Toast.LENGTH_SHORT).show();
+                } else {
+                    int size = Integer.parseInt(jsonObject.getString("size"));
+                    ingredientListName = new ArrayList<>();
+                    ingredientListAmount = new ArrayList<>();
+                    for(int i = 0; i < size; i++) {
+                        ingredientListName.add(jsonObject.getString("name" + i));
+                        ingredientListAmount.add(jsonObject.getString("amount" + i));
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> Toast.makeText(getApplicationContext(), "ERR: " + error, Toast.LENGTH_SHORT).show()) {
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                // below line we are creating a map for storing our values in key and value pair.
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("recipeID", recipeID);
+                // at last we are returning our params.
+                return params;
+            }
+        };
+        queue.add(request);
     }
 }
