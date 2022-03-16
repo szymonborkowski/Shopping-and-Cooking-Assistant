@@ -87,9 +87,7 @@ public class CalendarFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         loadMap();
-
     }
 
     /**
@@ -99,9 +97,6 @@ public class CalendarFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        // ...
-
         saveMap();
     }
 
@@ -351,8 +346,6 @@ public class CalendarFragment extends Fragment {
     }
 
     public void saveMap() {
-        Toast.makeText(getContext(), "Saving map", Toast.LENGTH_SHORT).show();
-
         SharedPreferences preferences = getContext().getSharedPreferences("com.example.shoppingandcookingassistant.MEALS_MAP", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         Gson gson = new Gson();
@@ -376,8 +369,6 @@ public class CalendarFragment extends Fragment {
         // This loop looks at the shared preferences for all the entries associated with
         // a certain date, then the meals for that date, and adds an entry to the map for each
         // date that it finds saved in the shared preferences.
-
-        Toast.makeText(getContext(), "Loading map", Toast.LENGTH_SHORT).show();
         SharedPreferences preferences = getContext().getSharedPreferences("com.example.shoppingandcookingassistant.MEALS_MAP", Context.MODE_PRIVATE);
         Gson gson = new Gson();
         plannedMealsForDate = new HashMap<>();

@@ -60,5 +60,6 @@
     <string name="instruction_here">Instruction here...</string>
     <string name="next_step_button">NEXT STEP</string>
     <string name="filters">Filters</string>
+    <string name="filters_no_filters_selected">Filters: No Filters Selected</string>
 
 </resources>

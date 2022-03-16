@@ -59,8 +59,15 @@ public class BasketFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        saveBasket();
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadBasket();
     }
 
     @Override
@@ -75,17 +82,15 @@ public class BasketFragment extends Fragment {
             public void onClick(View view) {
                 // add to inventory
                 saveArray(basketContents.toArray(new String[0]), "barcodes");
+                basketContents.clear();
+                saveBasket();
+                loadBasket();
                 Toast.makeText(getActivity(), "Ingredients added", Toast.LENGTH_SHORT).show();
             }
         });
 
         // List of scanned items:
-        basketContents = new ArrayList<>();
-
         listOfScannedItemsRV = root.findViewById(R.id.listOfScannedItemsRV);
-
-        rvAdapter = new BasketListRVAdapter(getActivity(), basketContents);
-
         listOfScannedItemsRV.setAdapter(rvAdapter);
         listOfScannedItemsRV.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -118,7 +123,8 @@ public class BasketFragment extends Fragment {
                         // if not, start the timer
                         if(Objects.isNull(previousResult)) {
                             // add the item to the list
-                            barcodeDescription.setText(result.toString());  // displays result
+                            String message = "Latest scanned barcode: " + result.toString();
+                            barcodeDescription.setText(message);  // displays result
                             rvAdapter.addItemToBasket(result.toString());
 
                             // display a message to the user
@@ -133,7 +139,8 @@ public class BasketFragment extends Fragment {
 
                             if(timerComplete) {
                                 // add the item to the list
-                                barcodeDescription.setText(result.toString());  // displays result
+                                String message = "Latest scanned barcode: " + result.toString();
+                                barcodeDescription.setText(message);
                                 rvAdapter.addItemToBasket(result.toString());
 
                                 // display a message to the user
@@ -146,7 +153,8 @@ public class BasketFragment extends Fragment {
                         // if the scanned barcode is different from the previous one
                         // add it to the list immediately
                         else if(!result.toString().equals(previousResult.toString())) {
-                                barcodeDescription.setText(result.toString());  // displays result
+                                String message = "Latest scanned barcode: " + result.toString();
+                                barcodeDescription.setText(message);
                                 rvAdapter.addItemToBasket(result.toString());
 
                                 Toast.makeText(getActivity(), result.toString() + " added", Toast.LENGTH_SHORT).show();
@@ -191,5 +199,25 @@ public class BasketFragment extends Fragment {
         for(int i = 0; i < array.length; i++)
             editor.putString(arrayName + "_" + i, array[i]);
         editor.apply();
+    }
+
+    public void saveBasket() {
+        SharedPreferences preferences = getContext().getSharedPreferences("com.example.shoppingandcookingassistant.BASKET_CONTENTS", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("basket_number", basketContents.size());
+        for(int i = 0; i < basketContents.size(); i++) {
+            editor.putString("basket_item_" + i, basketContents.get(i));
+        }
+        editor.apply();
+    }
+
+    public void loadBasket() {
+        SharedPreferences preferences = getContext().getSharedPreferences("com.example.shoppingandcookingassistant.BASKET_CONTENTS", Context.MODE_PRIVATE);
+        int basketSize = preferences.getInt("basket_number", 0);
+        basketContents = new ArrayList<>();
+        rvAdapter = new BasketListRVAdapter(getActivity(), basketContents);
+        for(int i = 0; i < basketSize; i++) {
+            basketContents.add(preferences.getString("basket_item_" + i, ""));
+        }
     }
 }

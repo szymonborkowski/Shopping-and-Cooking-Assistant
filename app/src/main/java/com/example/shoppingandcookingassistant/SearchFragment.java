@@ -140,10 +140,11 @@ public class SearchFragment extends Fragment {
                                     intent.getStringArrayListExtra(ChooseSearchFiltersActivity.CUISINE_FILTERS);
 
                             String message = "Filters: ";
-                            for(String filter : selectedCuisineFilters) {
-                                message += filter + ", ";
+                            int size = selectedCuisineFilters.size();
+                            for(int i = 0; i < size-1; i++) {
+                                message += selectedCuisineFilters.get(i) + ", ";
                             }
-
+                            message += selectedCuisineFilters.get(size-1);
                             chosenFiltersTV.setText(message);
                         }
                     }
