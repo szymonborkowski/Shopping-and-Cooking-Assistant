@@ -48,6 +48,7 @@ public class SearchFragment extends Fragment {
      */
     public static final String RECIPE_NAME = "com.example.shoppingandcookingassistant.RECIPE_NAME";
     public static final String RECIPE_INSTRUCTIONS = "com.example.shoppingandcookingassistant.RECIPE_INSTRUCTIONS";
+    public static final String RECIPE_INGREDIENTS = "com.example.shoppingandcookingassistant.RECIPE_INGREDIENTS";
 
     ArrayAdapter<String> arrayAdapter;
 
@@ -159,14 +160,58 @@ public class SearchFragment extends Fragment {
         Intent intent = new Intent(getActivity(), DisplayRecipeInstructions.class);
 
         // pass in values from the chosen recipe:
-        intent.putExtra(RECIPE_NAME, recipeNames.get(pos));
-        intent.putExtra(RECIPE_INSTRUCTIONS, recipeInstructions.get(pos));
+        intent.putExtra(RECIPE_NAME, arrayAdapter.getItem(pos));
 
-        startActivity(intent);
+        String url = "https://easyshoppingeasycooking.eu.ngrok.io/saca_network/openRecipe.php";
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+
+        //This is for error handling of the responses
+        StringRequest request = new StringRequest(Request.Method.POST, url, response -> {
+            try {
+                // on below line passing our response to json object.
+                System.out.println(response); //For checking the response if there is an error
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getString("instructions0") == null) {
+                    Toast.makeText(getActivity(), "No instructions for this recipe found.", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    int size = Integer.parseInt(jsonObject.getString("size"));
+                    String ingredients = "";
+                    for(int i = 0; i < size; i++) {
+                        ingredients += jsonObject.getString("name" + i) + " ";
+                        ingredients += jsonObject.getString("amount" + i) + "\n";
+                    }
+
+                    String instructions = jsonObject.getString("instructions0");
+
+                    intent.putExtra(RECIPE_INSTRUCTIONS, instructions);
+                    intent.putExtra(RECIPE_INGREDIENTS, ingredients);
+
+                    startActivity(intent);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> Toast.makeText(getActivity(), "ERR: " + error, Toast.LENGTH_SHORT).show()) {
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                // below line we are creating a map for storing our values in key and value pair.
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("recipeName", arrayAdapter.getItem(pos));
+                // at last we are returning our params.
+                return params;
+            }
+        };
+        queue.add(request);
     }
 
     public void fetchRecipes(String query, String userID) {
-        String url = "https://easyshoppingeasycooking.eu.ngrok.io/saca_network/queryRecipe.php";
+        String url = "https://easyshoppingeasycooking.eu.ngrok.io/saca_network/searchRecipe.php";
         RequestQueue queue = Volley.newRequestQueue(getActivity());
 
         //This is for error handling of the responses
@@ -181,11 +226,9 @@ public class SearchFragment extends Fragment {
 
                     int size = Integer.parseInt(jsonObject.getString("size"));
                     recipeNames.clear();
-                    recipeInstructions.clear();
 
                     for(int i = 0; i < size; i++) {
                         recipeNames.add(jsonObject.getString("recipeName" + i));
-                        recipeInstructions.add(jsonObject.getString("instructions" + i));
                     }
 
                     arrayAdapter.getFilter().filter(query);

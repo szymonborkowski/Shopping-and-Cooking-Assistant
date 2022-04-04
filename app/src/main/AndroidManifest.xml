@@ -44,6 +44,10 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".DisplayRecipeInstructions"
             android:screenOrientation="portrait"/>
+        <activity android:name=".ChooseAllergyActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ChooseEquipmentActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

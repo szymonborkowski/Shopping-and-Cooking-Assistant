@@ -8,12 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class UserDetailsRVAdapter extends RecyclerView.Adapter<UserDetailsRVAdapter.RVViewHolder> {
-
+    // instance variables
     Context c;
     String[] s1, s2;
 
@@ -33,10 +32,10 @@ public class UserDetailsRVAdapter extends RecyclerView.Adapter<UserDetailsRVAdap
 
     @Override
     public void onBindViewHolder(@NonNull RVViewHolder holder, int position) {
-        holder.title.setText(s1[position]);
-        holder.description.setText(s2[position]);
+        holder.heading.setText(s1[position]);
+        holder.userData.setText(s2[position]);
 
-        holder.description.addTextChangedListener(new TextWatcher() {
+        holder.userData.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -60,15 +59,14 @@ public class UserDetailsRVAdapter extends RecyclerView.Adapter<UserDetailsRVAdap
 
     public class RVViewHolder extends RecyclerView.ViewHolder {
 
-        TextView title;
-        EditText description;
+        TextView heading;
+        EditText userData;
 
         public RVViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            title = itemView.findViewById(R.id.titleText);
-            description = itemView.findViewById(R.id.editTextTextPersonName);
+            heading = itemView.findViewById(R.id.titleText);
+            userData = itemView.findViewById(R.id.editTextTextPersonName);
         }
     }
 }
-

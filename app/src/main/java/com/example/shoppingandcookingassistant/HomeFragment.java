@@ -1,5 +1,6 @@
 package com.example.shoppingandcookingassistant;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -37,6 +38,8 @@ public class HomeFragment extends Fragment {
     //HomeRecipeRVAdapter rvAdapter;
     List<Results.ResultsHandler> rhList;
 
+    ArrayList<String> idList, nameList, descList, cuisineList, mealList;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -59,16 +62,15 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        if(LogInScreenActivity.LOGGED_IN_USER_ID != null) {
-            getData(LogInScreenActivity.LOGGED_IN_USER_ID, "loadHomeFragment");
-        }
+        getData("8776", "loadHomeFragment");
 
         // set up the RecyclerView to display the results
         rvResults = view.findViewById(R.id.rvResults);
         rhList = new ArrayList<>();
-        rAdapter = new ResultsAdapter(getActivity(), rhList);
+        rAdapter = new ResultsAdapter(getActivity(), rhList, rvResults, nameList);
         rvResults.setAdapter(rAdapter);
         rvResults.setLayoutManager(new LinearLayoutManager(getActivity()));
+
     }
 
     /**
@@ -103,11 +105,11 @@ public class HomeFragment extends Fragment {
                         int size = Integer.valueOf(jsonObject.getString("size"));
 
                         // recipe attributes (id, name, description, cuisine, meal) will be stored in individual lists
-                        List<String> idList = new ArrayList<>();
-                        List<String> nameList = new ArrayList<>();
-                        List<String> descList = new ArrayList<>();
-                        List<String> cuisineList = new ArrayList<>();
-                        List<String> mealList = new ArrayList<>();
+                        idList = new ArrayList<>();
+                        nameList = new ArrayList<>();
+                        descList = new ArrayList<>();
+                        cuisineList = new ArrayList<>();
+                        mealList = new ArrayList<>();
 
                         // populate each attribute list with the recipe results
                         for (int i=0; i<size; i++) {
