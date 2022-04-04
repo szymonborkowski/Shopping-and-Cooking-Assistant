@@ -20,6 +20,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.budiyev.android.codescanner.AutoFocusMode;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
@@ -27,7 +31,12 @@ import com.budiyev.android.codescanner.DecodeCallback;
 import com.budiyev.android.codescanner.ScanMode;
 import com.google.zxing.Result;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -123,31 +132,13 @@ public class BasketFragment extends Fragment {
                         // if not, start the timer
                         if(Objects.isNull(previousResult)) {
                             // add the item to the list
-                            String message = "Latest scanned barcode: " + result.toString();
+                            String message = "Latest scanned barcode: " + result;
                             barcodeDescription.setText(message);  // displays result
-                            rvAdapter.addItemToBasket(result.toString());
+                            getBarcodeName(result.toString());
 
                             // display a message to the user
-                            Toast.makeText(getActivity(), result.toString() + " added", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), result + " added", Toast.LENGTH_SHORT).show();
                             previousResult = result;
-                        }
-
-                        else if(result.toString().equals(previousResult.toString()) && !timerStarted) {
-                            timerStarted = true;
-                            long timeStartMillis = System.currentTimeMillis();
-                            timeSeconds = TimeUnit.MILLISECONDS.toSeconds(timeStartMillis);
-
-                            if(timerComplete) {
-                                // add the item to the list
-                                String message = "Latest scanned barcode: " + result.toString();
-                                barcodeDescription.setText(message);
-                                rvAdapter.addItemToBasket(result.toString());
-
-                                // display a message to the user
-                                Toast.makeText(getActivity(), result.toString() + " added", Toast.LENGTH_SHORT).show();
-
-                                timerComplete = false;
-                            }
                         }
 
                         // if the scanned barcode is different from the previous one
@@ -155,21 +146,12 @@ public class BasketFragment extends Fragment {
                         else if(!result.toString().equals(previousResult.toString())) {
                                 String message = "Latest scanned barcode: " + result.toString();
                                 barcodeDescription.setText(message);
-                                rvAdapter.addItemToBasket(result.toString());
+                                getBarcodeName(result.toString());
 
-                                Toast.makeText(getActivity(), result.toString() + " added", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), result + " added", Toast.LENGTH_SHORT).show();
 
                                 previousResult = result;
                         }
-
-                        // if the timer has been running for 5 seconds,
-                        // stop the timer to allow the item to be added to the list again
-                        if((TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - timeSeconds >= 5) && timerStarted) {
-                            timerComplete = true;
-                            timerStarted = false;
-                        }
-
-
                     }
                 });
             }
@@ -219,5 +201,44 @@ public class BasketFragment extends Fragment {
         for(int i = 0; i < basketSize; i++) {
             basketContents.add(preferences.getString("basket_item_" + i, ""));
         }
+    }
+
+    public void getBarcodeName(String barcode) {
+        String url = "https://easyshoppingeasycooking.eu.ngrok.io/saca_network/barcodeScan.php";
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+
+        //This is for error handling of the responses
+        StringRequest request = new StringRequest(Request.Method.POST, url, response -> {
+            try {
+                // on below line passing our response to json object.
+                System.out.println(response); //For checking the response if there is an error
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getString("name0") == null) {
+                    Toast.makeText(getActivity(), "No item for this barcode found.", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    String nameBuff = jsonObject.getString("name0");
+                    rvAdapter.addItemToBasket(nameBuff);
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> Toast.makeText(getActivity(), "ERR: " + error, Toast.LENGTH_SHORT).show()) {
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                // below line we are creating a map for storing our values in key and value pair.
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("ingID", barcode);
+                // at last we are returning our params.
+                return params;
+            }
+        };
+        queue.add(request);
     }
 }

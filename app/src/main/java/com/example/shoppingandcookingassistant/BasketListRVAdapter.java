@@ -64,6 +64,7 @@ public class BasketListRVAdapter extends RecyclerView.Adapter<BasketListRVAdapte
 
     public void addItemToBasket(String item) {
         ingredients.add(item);
+        notifyItemInserted(ingredients.size()-1);
     }
 
 }
