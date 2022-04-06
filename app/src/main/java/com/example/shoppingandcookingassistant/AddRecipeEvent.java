@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,16 +31,12 @@ import java.util.Map;
 public class AddRecipeEvent extends AppCompatActivity {
 
     Button saveRecipe;
-
     TextView recipeName;
     TextView lastDate;
     TextView totalPortions;
     Button changeRecipeBtn;
-    String chosenRecipeInstructions;
-    String ingredients;
     ArrayList<String> ingredientListName;
     ArrayList<String> ingredientListAmount;
-
     CalendarHorizontalNumberSelector daysSelector;
     PortionHorizontalNumberSelector portionsSelector;
 
@@ -61,34 +56,29 @@ public class AddRecipeEvent extends AppCompatActivity {
 
         saveRecipe = findViewById(R.id.saveRecipeEventBtn);
 
-        saveRecipe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // send over a prompt to add a recipe to a list
-                Intent addRecipe = new Intent();
-                addRecipe.putExtra(CHOSEN_RECIPE, recipeName.getText().toString());
-                addRecipe.putExtra(PORTIONS, totalPortions.getText());
-                addRecipe.putExtra(DAYS_LEFT, String.valueOf(daysSelector.getNumber()));
-                addRecipe.putStringArrayListExtra(CHOSEN_RECIPE_INGREDIENT_NAMES, ingredientListName);
-                addRecipe.putStringArrayListExtra(CHOSEN_RECIPE_INGREDIENT_AMOUNTS, ingredientListAmount);
-                setResult(Activity.RESULT_OK, addRecipe);
-                finish();
-            }
+        // When the saveRecipe button is pressed save the event that was created
+        saveRecipe.setOnClickListener(view -> {
+            // send over a prompt to add a recipe to a list
+            Intent addRecipe = new Intent();
+            addRecipe.putExtra(CHOSEN_RECIPE, recipeName.getText().toString());
+            addRecipe.putExtra(PORTIONS, totalPortions.getText());
+            addRecipe.putExtra(DAYS_LEFT, String.valueOf(daysSelector.getNumber()));
+            addRecipe.putStringArrayListExtra(CHOSEN_RECIPE_INGREDIENT_NAMES, ingredientListName);
+            addRecipe.putStringArrayListExtra(CHOSEN_RECIPE_INGREDIENT_AMOUNTS, ingredientListAmount);
+            setResult(Activity.RESULT_OK, addRecipe);
+            finish();
         });
 
+        // Initialising several components of the Activity
         recipeName = findViewById(R.id.chosenRecipeTV);
-
         lastDate = findViewById(R.id.lastDateTV);
         totalPortions = findViewById(R.id.portionsTV);
-
         daysSelector = findViewById(R.id.daysSelector);
-
         portionsSelector = findViewById(R.id.peopleSelector);
         portionsSelector.setTV(totalPortions, daysSelector);
-
         daysSelector.setTVAndDate(lastDate, date, portionsSelector);
 
-        // move into calhozselector?
+        // Initialising the calendar and setting the date to today's date
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, 1);
@@ -100,15 +90,17 @@ public class AddRecipeEvent extends AppCompatActivity {
         totalPortions.setText(message);
 
         changeRecipeBtn = findViewById(R.id.changeRecipeBtn);
+
+        /*
+         Method that implements functionality for switching the chosen recipe.
+         A new activity is started that allows the user to search for a recipe.
+         The result is taken and the chosen recipe is set.
+         */
         changeRecipeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SearchRecipeActivity.class);
                 activityResultLauncher.launch(intent);
-
-                // on result get chosen recipe
-
-                // TODO: ON RESULT METHOD SET TV TO XYZ
             }
             ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
                     new ActivityResultContracts.StartActivityForResult(),
@@ -125,6 +117,7 @@ public class AddRecipeEvent extends AppCompatActivity {
         });
     }
 
+    // After a recipe is chosen the ingredients are fetched from the dB using the below method.
     public void fetchIngredients(String recipeID) {
         String url = "https://easyshoppingeasycooking.eu.ngrok.io/saca_network/getIngredientsForRecipe.php";
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());

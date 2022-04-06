@@ -1,5 +1,7 @@
 package com.example.shoppingandcookingassistant;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,9 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,41 +26,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChooseAllergyActivity extends AppCompatActivity {
+public class CreateAllergyActivity extends AppCompatActivity {
+    // instance variables
     Button submitChoice;
     LinearLayout linLayout;
     CheckBox celery, gluten, crustacean, egg, fish, lupin, milk, mollusc, mustard, nut, peanut, sesameSeed, soybean, sulphite;
     List<CheckBox> checkList;
+    TextView desc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_allergy);
+        setContentView(R.layout.activity_create_equipment);
         linLayout = (LinearLayout) findViewById(R.id.linear_layout);
+
+        desc = findViewById(R.id.description);
+        desc.setText("Please select any allergies you have from the list below \nPress 'Continue' when you are done");
 
         checkList = new ArrayList<CheckBox>();
         getAllAllergies();
 
-
-        // method to fetch the user's current equipment settings
-        getAllergies(LogInScreenActivity.LOGGED_IN_USER_ID);
-
-
-
         Intent chosenAllergies = new Intent();
         setResult(Activity.RESULT_OK, chosenAllergies);
 
-        submitChoice = findViewById(R.id.submit_choice_button_allergy);
+        // setup continue button
+        submitChoice = findViewById(R.id.submit_choice_button);
         submitChoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 for(int i=0; i<checkList.size(); i++) {
-                    if (checkList.get(i).isChecked())
-                        submitUpdates(String.valueOf(checkList.get(i).getText()), LogInScreenActivity.LOGGED_IN_USER_ID, "addAllergy");
-                    else
-                        submitUpdates(String.valueOf(checkList.get(i).getText()), LogInScreenActivity.LOGGED_IN_USER_ID, "deleteAllergy");
+                    if (checkList.get(i).isChecked()) // any boxes checked will be added to the database
+                        submitSelection(String.valueOf(checkList.get(i).getText()), LogInScreenActivity.LOGGED_IN_USER_ID);
                 }
                 finish();
+                // insert code to proceed to the home screen
             }
         });
     }
@@ -126,8 +126,8 @@ public class ChooseAllergyActivity extends AppCompatActivity {
         }
     }
 
-    public void getAllergies(String userID) {
-        String url = "https://easyshoppingeasycooking.eu.ngrok.io/saca_network/getAllergies.php";
+    public void submitSelection(String allergenName, String userID) {
+        String url = "https://easyshoppingeasycooking.eu.ngrok.io/saca_network/addAllergy.php";
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
         // calling a string request method to post the data to the API
@@ -137,13 +137,6 @@ public class ChooseAllergyActivity extends AppCompatActivity {
                 try {
                     // on below line passing our response to json object.
                     JSONObject jsonObject = new JSONObject(response);
-                    for(int i=0; i<Integer.valueOf(jsonObject.getString("size")); i++) {
-                        String str = jsonObject.getString("allergenName" + i);
-                        for(int j=0; j<checkList.size(); j++) {
-                            if(String.valueOf(checkList.get(j).getText()).equals(str))
-                                checkList.get(j).setChecked(true);
-                        }
-                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -166,46 +159,7 @@ public class ChooseAllergyActivity extends AppCompatActivity {
 
                 // input parameter(s) for the HTTP POST request
                 params.put("userID", userID);
-                return params;
-            }
-        };
-        queue.add(request);
-    }
-
-    public void submitUpdates(String allergen, String uID, String file) {
-        String url = "https://easyshoppingeasycooking.eu.ngrok.io/saca_network/" + file + ".php";
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-
-        // calling a string request method to post the data to the API
-        StringRequest request = new StringRequest(Request.Method.POST, url, new com.android.volley.Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    // on below line passing our response to json object.
-                    JSONObject jsonObject = new JSONObject(response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new com.android.volley.Response.ErrorListener() { //This is for error handling of the responses
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Fail to submit new details" + error, Toast.LENGTH_SHORT).show();
-            }
-        }) {
-            @Override
-            public String getBodyContentType() {
-                return "application/x-www-form-urlencoded; charset=UTF-8";
-            }
-
-            @Override
-            protected Map<String, String> getParams() {
-                // creating a map for storing values in key and value pair.
-                Map<String, String> params = new HashMap<String, String>();
-
-                // input parameter(s) for the HTTP POST request
-                params.put("userID", uID);
-                params.put("allergenName", allergen);
+                params.put("allergenName", allergenName);
                 return params;
             }
         };
@@ -220,4 +174,3 @@ public class ChooseAllergyActivity extends AppCompatActivity {
         setResult(Activity.RESULT_OK, chosenFilters);
     }
 }
-

@@ -37,8 +37,8 @@ public class UserDetailsActivity extends AppCompatActivity {
         // set the headings to be displayed in TexViews
         headings = new String[] {"First Name", "Last Name", "Email", "Username"};
 
-        // get user details from the database for the sample user 8776
-        getUserDetails(headings, "8776");
+        // get user details from the database for the user
+        getUserDetails(headings, LogInScreenActivity.LOGGED_IN_USER_ID);
 
         recyclerView = findViewById(R.id.recyclerView);
 
@@ -69,8 +69,8 @@ public class UserDetailsActivity extends AppCompatActivity {
         updateDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // send new user details to the database for sample user 8776
-                confirmDetails(userData, "8776");
+                // send new user details to the database for user
+                confirmDetails(userData, LogInScreenActivity.LOGGED_IN_USER_ID);
                 Toast.makeText(getApplicationContext(), "Details updated", Toast.LENGTH_SHORT).show();
             }
         });

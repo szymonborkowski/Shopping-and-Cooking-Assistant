@@ -34,13 +34,11 @@ public class BasketListRVAdapter extends RecyclerView.Adapter<BasketListRVAdapte
     public void onBindViewHolder(@NonNull BasketRVViewHolder holder, int position) {
         holder.ingredients.setText(ingredients.get(position));
 
-        holder.removeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ingredients.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, getItemCount());
-            }
+        // If the remove button is pressed the item gets removed from the basket.
+        holder.removeBtn.setOnClickListener(v -> {
+            ingredients.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, getItemCount());
         });
     }
 
@@ -49,7 +47,7 @@ public class BasketListRVAdapter extends RecyclerView.Adapter<BasketListRVAdapte
         return ingredients.size();
     }
 
-    public class BasketRVViewHolder extends RecyclerView.ViewHolder {
+    public static class BasketRVViewHolder extends RecyclerView.ViewHolder {
 
         TextView ingredients;
         ImageButton removeBtn;
@@ -62,6 +60,7 @@ public class BasketListRVAdapter extends RecyclerView.Adapter<BasketListRVAdapte
         }
     }
 
+    // This method is used by the barcode scanner to add new items to the basket.
     public void addItemToBasket(String item) {
         ingredients.add(item);
         notifyItemInserted(ingredients.size()-1);

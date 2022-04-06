@@ -2,6 +2,7 @@ package com.example.shoppingandcookingassistant;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
@@ -49,6 +50,18 @@ public class LogInScreenActivity extends AppCompatActivity {
                     finish();
 
                 getPasswordFromDB(usernameET.getText().toString());
+            }
+        });
+
+        Button signupBtn = findViewById(R.id.signupBtn);
+
+        signupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+
+                Intent intent = new Intent(getApplicationContext(), CreateUserAccountActivity.class);
+                startActivity(intent);
             }
         });
 

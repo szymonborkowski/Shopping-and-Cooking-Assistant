@@ -15,6 +15,15 @@
         android:theme="@style/Theme.ShoppingAndCookingAssistant"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".CreateEquipmentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreateAllergyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreateUserAccountActivity"
+            android:exported="false" />
+        <activity
             android:name=".SearchRecipeActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
@@ -38,15 +47,22 @@
             android:name=".DisplaySpecificInstructionActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
-        <activity android:name=".AddRecipeEvent"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".LogInScreenActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".DisplayRecipeInstructions"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ChooseAllergyActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ChooseEquipmentActivity"
+        <activity
+            android:name=".AddRecipeEvent"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LogInScreenActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DisplayRecipeInstructions"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ChooseAllergyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ChooseEquipmentActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".DataConsentForm"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".MainActivity"
@@ -54,6 +70,7 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,7 +76,8 @@ public class UserFragment extends Fragment {
         signOutTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // add sign-out functionality
+                Intent intent = new Intent(getActivity(), LogInScreenActivity.class);
+                startActivity(intent);
             }
         });
 

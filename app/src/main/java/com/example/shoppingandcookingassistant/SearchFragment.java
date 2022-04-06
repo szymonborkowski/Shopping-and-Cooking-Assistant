@@ -178,7 +178,7 @@ public class SearchFragment extends Fragment {
                     int size = Integer.parseInt(jsonObject.getString("size"));
                     String ingredients = "";
                     for(int i = 0; i < size; i++) {
-                        ingredients += jsonObject.getString("name" + i) + " ";
+                        ingredients += " • " + jsonObject.getString("name" + i) + " - ";
                         ingredients += jsonObject.getString("amount" + i) + "\n";
                     }
 

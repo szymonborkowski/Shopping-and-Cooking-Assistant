@@ -62,7 +62,7 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        getData("8776", "loadHomeFragment");
+        getData("1", "loadHomeFragment");
 
         // set up the RecyclerView to display the results
         rvResults = view.findViewById(R.id.rvResults);
@@ -97,7 +97,7 @@ public class HomeFragment extends Fragment {
                 try {
                     // on below line passing our response to json object.
                     JSONObject jsonObject = new JSONObject(response);
-                    if (Integer.valueOf(jsonObject.getString("size")) == 0) { // if the executed query returned no results
+                    if (Integer.parseInt(jsonObject.getString("size")) == 0) { // if the executed query returned no results
                         Toast.makeText(getActivity(), "Query returned no results", Toast.LENGTH_SHORT).show();
                     } else {
                         // use jsonObject.getString(String columnName) to return a string object of the desired result

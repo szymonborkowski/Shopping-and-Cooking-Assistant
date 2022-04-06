@@ -34,25 +34,12 @@ public class ShoppingListsActivity extends AppCompatActivity {
 
     public void loadArray() {
         SharedPreferences preferences = getSharedPreferences("com.example.shoppingandcookingassistant.SHOPPING_LISTS", Context.MODE_PRIVATE);
-        int size = preferences.getInt("ingredients_size", 0);
+        int size = preferences.getInt(LogInScreenActivity.LOGGED_IN_USER_ID + "_ingredients_size", 0);
         ingredientName = new ArrayList<>();
         ingredientAmount = new ArrayList<>();
         for(int i = 0; i < size; i++) {
-            ingredientName.add(preferences.getString("ingredientName_" + i, null));
-            ingredientAmount.add(preferences.getString("ingredientAmount_" + i, null));
+            ingredientName.add(preferences.getString(LogInScreenActivity.LOGGED_IN_USER_ID + "_ingredientName_" + i, null));
+            ingredientAmount.add(preferences.getString(LogInScreenActivity.LOGGED_IN_USER_ID + "_ingredientAmount_" + i, null));
         }
     }
-
-    /*
-    public void saveShoppingList() {
-        SharedPreferences preferences = context.getSharedPreferences("com.example.shoppingandcookingassistant.SHOPPING_LISTS", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("ingredients_size", ingredients.size());
-        for(int i = 0; i < ingredients.size(); i++) {
-            editor.putString("ingredientName_" + i, ingredients.get(i).getName());
-            editor.putString("ingredientAmount_" + i, ingredients.get(i).getAmountString());
-        }
-        editor.apply();
-    }
-     */
 }

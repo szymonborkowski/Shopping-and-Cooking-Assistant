@@ -20,10 +20,10 @@ public class ShoppingList {
     public void saveShoppingList() {
         SharedPreferences preferences = context.getSharedPreferences("com.example.shoppingandcookingassistant.SHOPPING_LISTS", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("ingredients_size", ingredients.size());
+        editor.putInt(LogInScreenActivity.LOGGED_IN_USER_ID + "_ingredients_size", ingredients.size());
         for(int i = 0; i < ingredients.size(); i++) {
-            editor.putString("ingredientName_" + i, ingredients.get(i).getName());
-            editor.putString("ingredientAmount_" + i, ingredients.get(i).getAmountString());
+            editor.putString(LogInScreenActivity.LOGGED_IN_USER_ID + "_ingredientName_" + i, ingredients.get(i).getName());
+            editor.putString(LogInScreenActivity.LOGGED_IN_USER_ID + "_ingredientAmount_" + i, ingredients.get(i).getAmountString());
         }
         editor.apply();
     }

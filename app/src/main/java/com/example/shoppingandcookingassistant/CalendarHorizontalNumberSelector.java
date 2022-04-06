@@ -26,6 +26,7 @@ public class CalendarHorizontalNumberSelector extends LinearLayout {
 
         inflate(context, R.layout.number_selector, this);
 
+        // Define the min and max numbers that can be chosen
         min = 1;
         max = 365;
 

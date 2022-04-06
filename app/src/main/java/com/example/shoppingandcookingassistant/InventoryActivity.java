@@ -26,14 +26,16 @@ public class InventoryActivity extends AppCompatActivity {
 
     }
 
-    // https://stackoverflow.com/questions/12350800/android-how-to-store-array-of-strings-in-sharedpreferences-for-android
-
     public String[] loadArray(String arrayName) {
         SharedPreferences preferences = getSharedPreferences("com.example.shoppingandcookingassistant.INGREDIENTS", Context.MODE_PRIVATE);
-        int size = preferences.getInt(arrayName + "_size", 0);
+        int size = preferences.getInt(LogInScreenActivity.LOGGED_IN_USER_ID + "_" + arrayName + "_size", 0);
         String[] array = new String[size];
-        for(int i = 0; i < size; i++)
-            array[i] = preferences.getString(arrayName + "_" + i, null);
+        for(int i = 0; i < size; i++) {
+            array[i] = " • " + preferences.getString(LogInScreenActivity.LOGGED_IN_USER_ID + "_" + arrayName + "_" + i + "_name", null);
+            array[i] += " - " + preferences.getString(LogInScreenActivity.LOGGED_IN_USER_ID + "_" + arrayName + "_" + i + "_amount", null);
+                                                    //   LogInScreenActivity.LOGGED_IN_USER_ID + "_barcodes_" + i + "_amount"
+        }
         return array;
     }
 }
+
