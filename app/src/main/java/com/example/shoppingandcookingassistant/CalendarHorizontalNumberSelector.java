@@ -43,7 +43,6 @@ public class CalendarHorizontalNumberSelector extends LinearLayout {
     private class btnPressHandler implements OnClickListener {
 
         int iteration;
-
         public btnPressHandler(int iteration) {
             this.iteration = iteration;
         }

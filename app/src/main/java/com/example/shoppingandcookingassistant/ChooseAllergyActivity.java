@@ -35,16 +35,13 @@ public class ChooseAllergyActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_allergy);
-        linLayout = (LinearLayout) findViewById(R.id.linear_layout);
+        linLayout = findViewById(R.id.linear_layout);
 
         checkList = new ArrayList<CheckBox>();
         getAllAllergies();
 
-
         // method to fetch the user's current equipment settings
         getAllergies(LogInScreenActivity.LOGGED_IN_USER_ID);
-
-
 
         Intent chosenAllergies = new Intent();
         setResult(Activity.RESULT_OK, chosenAllergies);
@@ -64,6 +61,7 @@ public class ChooseAllergyActivity extends AppCompatActivity {
         });
     }
 
+    // Method used to initialise the allergies checkboxes.
     public void getAllAllergies() {
         celery = new CheckBox(getApplicationContext());
         celery.setText("Celery");
@@ -137,10 +135,10 @@ public class ChooseAllergyActivity extends AppCompatActivity {
                 try {
                     // on below line passing our response to json object.
                     JSONObject jsonObject = new JSONObject(response);
-                    for(int i=0; i<Integer.valueOf(jsonObject.getString("size")); i++) {
+                    for(int i = 0; i<Integer.parseInt(jsonObject.getString("size")); i++) {
                         String str = jsonObject.getString("allergenName" + i);
                         for(int j=0; j<checkList.size(); j++) {
-                            if(String.valueOf(checkList.get(j).getText()).equals(str))
+                            if(String.valueOf(checkList.get(j).getText()).toLowerCase().equals(str))
                                 checkList.get(j).setChecked(true);
                         }
                     }

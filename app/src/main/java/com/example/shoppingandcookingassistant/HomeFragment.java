@@ -62,7 +62,12 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        getData("1", "loadHomeFragment");
+        String uID = "1";
+        if(LogInScreenActivity.LOGGED_IN_USER_ID != null) {
+            uID = LogInScreenActivity.LOGGED_IN_USER_ID;
+        }
+
+        getData(uID, "loadHomeFragment");
 
         // set up the RecyclerView to display the results
         rvResults = view.findViewById(R.id.rvResults);
